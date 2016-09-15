@@ -1,0 +1,2 @@
+- separate printing of menu and persons
+- multipel screens
