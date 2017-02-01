@@ -1,2 +1,0 @@
-- implemented swiping
-- removed next button

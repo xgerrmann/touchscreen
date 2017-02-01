@@ -1,3 +1,0 @@
-- Multiple screens
-- Summary shows the orders correctly
-- Smalle spacong between tiles/buttons
