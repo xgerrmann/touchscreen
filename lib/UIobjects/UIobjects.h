@@ -43,8 +43,9 @@ class Block
 		// Variables
 		
 		// Functions
-		Block( Screen* screen, int xpos, int ypos, int width, int height);
+		Block( Screen* screen, int xpos, int ypos, int width, int height, void* action);
 		void	draw();
+		void	(*action)( void ); // function pointer
 	private:
 		// Variables
 		int		xpos, ypos, width, height;
@@ -52,15 +53,17 @@ class Block
 };
 
 // Constructor
-Block::Block( Screen* sc, int x, int y, int w, int h )
+Block::Block( Screen* sc, int x, int y, int w, int h , void* func)
 {
 	this->screen=	sc;
 	this->xpos	=	x-1; ypos = y-1; width = w; height = h;
+	this->action=	func;
 }
 
 // Draw
 void Block::draw()
 {
-	this->screen->lcd->fillRect(xpos*screen->column_width,ypos*screen->row_height,screen->column_width, screen->row_height, 0xF81F);
+	this->screen->lcd->fillRect(xpos*screen->column_width,ypos*screen->row_height,screen->column_width*width, screen->row_height*height, 0xF81F);
+	this->screen->lcd->drawRect(xpos*screen->column_width,ypos*screen->row_height,screen->column_width*width, screen->row_height*height, 0xFFFF);
 }
 #endif
