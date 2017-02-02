@@ -60,10 +60,13 @@ UTouch  myTouch( 6, 5, 4, 3, 2);
 #define NCOLS	5
 
 #define NUMBER_SCREENS 2
+#define MAX_BLOCKS (2*NROWS*NCOLS)
+
 int screen_active;
 
 // Create array of screens for easy access
-Screen* screens[NUMBER_SCREENS];
+Screen*	screens[NUMBER_SCREENS];
+Block*	blocks[MAX_BLOCKS];
 
 void setup(void)
 {
@@ -73,18 +76,18 @@ void setup(void)
 	}
 	
 	// Screen 1
-	Block* block1 = new Block(screens[0], NCOLS,	1,			1,	NROWS/2,	NULL);
-	Block* block2 = new Block(screens[0], NCOLS,	NROWS/2+1,	1,	NROWS/2,	NULL);
-	Block* block3 = new Block(screens[0], 3,	4,	2,	1,	NULL);
-	Block* block4 = new Block(screens[0], 1,	1,	2,	1,	NULL);
-	Block* block5 = new Block(screens[0], 3,	1,	2,	1,	NULL);
-	Block* block6 = new Block(screens[0], 1,	3,	2,	1,	NULL);
+	blocks[0] = new Block(screens[0], NCOLS,	1,			1,	NROWS/2,	NULL);
+	blocks[1] = new Block(screens[0], NCOLS,	NROWS/2+1,	1,	NROWS/2,	NULL);
+	blocks[2] = new Block(screens[0], 3,	4,	2,	1,	NULL);
+	blocks[3] = new Block(screens[0], 1,	1,	2,	1,	NULL);
+	blocks[4] = new Block(screens[0], 3,	1,	2,	1,	NULL);
+	blocks[5] = new Block(screens[0], 1,	3,	2,	1,	NULL);
 	
 	// Screen 2
 	Screen screen2( &lcd, NROWS, NCOLS );
-	Block* block7 = new Block(screens[1], NCOLS,	1,			1,	NROWS/2,	NULL);
-	Block* block8 = new Block(screens[1], NCOLS,	NROWS/2+1,	1,	NROWS/2,	NULL);
-	Block* block9 = new Block(screens[1], 3,	4,	2,	1,	NULL);
+	blocks[6] = new Block(screens[1], NCOLS,	1,			1,	NROWS/2,	NULL);
+	blocks[7] = new Block(screens[1], NCOLS,	NROWS/2+1,	1,	NROWS/2,	NULL);
+	blocks[8] = new Block(screens[1], 3,	4,	2,	1,	NULL);
 	
 
 	// Other
@@ -94,17 +97,17 @@ void setup(void)
 	lcd.setRotation(3);
 
 	// Attach screen 1
-	screens[0]->attach_block(block1);
-	screens[0]->attach_block(block2);
-	screens[0]->attach_block(block3);
-	screens[0]->attach_block(block4);
-	screens[0]->attach_block(block5);
-	screens[0]->attach_block(block6);
+	screens[0]->attach_block(blocks[0]);
+	screens[0]->attach_block(blocks[1]);
+	screens[0]->attach_block(blocks[2]);
+	screens[0]->attach_block(blocks[3]);
+	screens[0]->attach_block(blocks[4]);
+	screens[0]->attach_block(blocks[5]);
 	
 	// Attach screen 2
-	screens[1]->attach_block(block7);
-	screens[1]->attach_block(block8);
-	screens[1]->attach_block(block9);
+	screens[1]->attach_block(blocks[6]);
+	screens[1]->attach_block(blocks[7]);
+	screens[1]->attach_block(blocks[8]);
 	
 	// Draw first screen
 	screens[1]->draw();
