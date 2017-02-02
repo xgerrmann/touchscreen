@@ -4,46 +4,63 @@
 #include "../Adafruit_TFTLCD/Adafruit_TFTLCD.h"
 
 // ## SCREEN ##################################################
-class Screen{
+class Screen
+{
 	public:
-		Screen();
-		void draw( Adafruit_TFTLCD );
+		// Variables
+		int row_height, column_width;
+		Adafruit_TFTLCD* lcd;
+		
+		// Functions
+		Screen(Adafruit_TFTLCD* lcd, int rows, int columns);
+		void draw();
 	private:
+		// Variables
+		int rows, columns;
 };
 
 // Constructor
-Screen::Screen( void )
+Screen::Screen( Adafruit_TFTLCD* display, int r, int c )
 {
-	// Empty
-}
+	this->lcd			= display;
+	this->rows			= r;
+	this->columns		= c;
 
+	this->column_width	= (int) display->height()/c;
+	this->row_height	= (int) display->width()/r;
+}
 
 // Draw
-void Screen::draw(Adafruit_TFTLCD tft)
+void Screen::draw()
 {
-	tft.fillScreen(0x001F);
+	lcd->fillScreen(0x001F);
 }
 
-// ## BUTTON ##################################################
-class Button{
+// ## BLOCK ##################################################
+class Block
+{
 	public:
-		Button();
-		void draw( Adafruit_TFTLCD );
+		// Variables
+		
+		// Functions
+		Block( Screen* screen, int xpos, int ypos, int width, int height);
+		void	draw();
 	private:
-		int		id;
-		String	text;
+		// Variables
+		int		xpos, ypos, width, height;
+		Screen*	screen;
 };
 
 // Constructor
-Button::Button( void )
+Block::Block( Screen* sc, int x, int y, int w, int h )
 {
-	// Empty
+	this->screen=	sc;
+	this->xpos	=	x-1; ypos = y-1; width = w; height = h;
 }
 
 // Draw
-void Button::draw(Adafruit_TFTLCD tft)
+void Block::draw()
 {
-	
+	this->screen->lcd->fillRect(xpos*screen->column_width,ypos*screen->row_height,screen->column_width, screen->row_height, 0xF81F);
 }
-
 #endif
