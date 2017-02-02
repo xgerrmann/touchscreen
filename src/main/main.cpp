@@ -5,7 +5,7 @@
 //#include <Arduino.h>
 #include "Adafruit_TFTLCD.h"	// Hardware-specific library
 #include "UIobjects.h"			// Custom library for User interface objects
-//#include <Adafruit_GFX.h>		// Core graphics library
+#include "UTouch.h"				// Digitizer lobrary
 
 // The control pins for the LCD can be assigned to any digital or
 // analog pins...but we'll use the analog pins as this allows us to
@@ -52,38 +52,81 @@ Adafruit_TFTLCD lcd( LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET );
 // a simpler declaration can optionally be used:
 // Adafruit_TFTLCD tft;
 
+// Digitizer touch library
+UTouch  myTouch( 6, 5, 4, 3, 2);
+
 // Define single screen
 #define NROWS	4
 #define NCOLS	5
-Screen screen( &lcd, NROWS, NCOLS );
 
-// Define several blocks
-Block block1(&screen, NCOLS,	1,			1,	NROWS/2,	NULL);
-Block block2(&screen, NCOLS,	NROWS/2+1,	1,	NROWS/2,	NULL);
-Block block3(&screen, 2,	2,		1,	1,	NULL);
-Block block4(&screen, 1,	NROWS,	1,	1,	NULL);
+#define NUMBER_SCREENS 2
+int screen_active;
+
+// Create array of screens for easy access
+Screen* screens[NUMBER_SCREENS];
 
 void setup(void)
 {
+	// Setup Blocks
+	for(int i = 0; i < NUMBER_SCREENS; i++){
+		screens[i] = new Screen( &lcd, NROWS, NCOLS );
+	}
+	
+	// Screen 1
+	Block* block1 = new Block(screens[0], NCOLS,	1,			1,	NROWS/2,	NULL);
+	Block* block2 = new Block(screens[0], NCOLS,	NROWS/2+1,	1,	NROWS/2,	NULL);
+	Block* block3 = new Block(screens[0], 3,	4,	2,	1,	NULL);
+	Block* block4 = new Block(screens[0], 1,	1,	2,	1,	NULL);
+	Block* block5 = new Block(screens[0], 3,	1,	2,	1,	NULL);
+	Block* block6 = new Block(screens[0], 1,	3,	2,	1,	NULL);
+	
+	// Screen 2
+	Screen screen2( &lcd, NROWS, NCOLS );
+	Block* block7 = new Block(screens[1], NCOLS,	1,			1,	NROWS/2,	NULL);
+	Block* block8 = new Block(screens[1], NCOLS,	NROWS/2+1,	1,	NROWS/2,	NULL);
+	Block* block9 = new Block(screens[1], 3,	4,	2,	1,	NULL);
+	
+
+	// Other
 	Serial.begin(9600);
 	uint16_t identifier = 0x9488;
 	lcd.begin(identifier);
 	lcd.setRotation(3);
-	screen.attach_block(&block1);
-	screen.attach_block(&block2);
-	screen.attach_block(&block3);
-	screen.attach_block(&block4);
+
+	// Attach screen 1
+	screens[0]->attach_block(block1);
+	screens[0]->attach_block(block2);
+	screens[0]->attach_block(block3);
+	screens[0]->attach_block(block4);
+	screens[0]->attach_block(block5);
+	screens[0]->attach_block(block6);
+	
+	// Attach screen 2
+	screens[1]->attach_block(block7);
+	screens[1]->attach_block(block8);
+	screens[1]->attach_block(block9);
+	
+	// Draw first screen
+	screens[1]->draw();
+	screen_active = 1;
+
+	// Initialize digitizer
+	myTouch.InitTouch();
+	myTouch.setPrecision(PREC_LOW);
 }
 
 void loop(void)
 {
-	//sc.draw(tft);
-	//delay(1000);
-	//lcd.fillScreen(WHITE);
-	//block1.draw();
-	//block2.draw();
-	//block3.draw();
-	//block4.draw();
-	screen.draw();
-	delay(1000);
+	long x,y;
+	while (myTouch.dataAvailable() == true)
+	{
+		myTouch.read();
+		y = myTouch.getX();
+		x = myTouch.getY();
+		if ( (y>200) && (x>150) )
+		{
+			screen_active = (screen_active+1)%(NUMBER_SCREENS);
+			screens[screen_active]->draw();
+		}
+	}
 }

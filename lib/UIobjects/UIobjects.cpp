@@ -2,6 +2,16 @@
 
 // ## SCREEN ##################################################
 // Constructor
+Screen::Screen( void )
+{
+	this->lcd			= NULL;
+	this->rows			= NULL;
+	this->columns		= NULL;
+
+	this->column_width	= NULL;
+	this->row_height	= NULL;
+}
+
 Screen::Screen( Adafruit_TFTLCD* display, int r, int c )
 {
 	this->lcd			= display;

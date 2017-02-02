@@ -18,6 +18,7 @@ class Screen
 		LinkedList<Block*> blocks; // Array of attached blocks
 		
 		// Functions
+		Screen( void );
 		Screen(Adafruit_TFTLCD* lcd, int rows, int columns);
 		void draw();
 		void attach_block(Block* block);
