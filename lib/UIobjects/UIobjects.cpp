@@ -39,6 +39,20 @@ void Screen::attach_block(Block* block)
 	blocks.add(block);
 }
 
+// Touch Handler
+void Screen::touch( int x, int y)
+{
+	this->lcd->fillCircle(x, y, 3, 0x0000);
+	for(int i=0; i<blocks.size(); i++)
+	{
+		Block* block = blocks.get(i);
+		if(block->inRegion( x, y ))
+		{
+			block->action();
+		}
+	}
+}
+
 // ## BLOCK ##################################################
 // Constructor
 Block::Block( Screen* sc, int x, int y, int w, int h , void (*func)(void))
@@ -53,4 +67,17 @@ void Block::draw()
 {
 	this->screen->lcd->fillRect(xpos*screen->column_width,ypos*screen->row_height,screen->column_width*width, screen->row_height*height, 0xF81F);
 	this->screen->lcd->drawRect(xpos*screen->column_width,ypos*screen->row_height,screen->column_width*width, screen->row_height*height, 0xFFFF);
+}
+
+bool Block::inRegion( int x, int y)
+{
+	bool cond0 = xpos*screen->column_width<=x;
+	bool cond1 = (xpos+this->width)*screen->column_width>x;
+	bool cond2 = ypos*screen->row_height<=y;
+	bool cond3 = (ypos+this->height)*screen->row_height*this->height>y;
+	if( cond0 && cond1 && cond2 && cond3)
+	{
+		return true;
+	}
+	return false;
 }

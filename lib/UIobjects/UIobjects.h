@@ -22,6 +22,7 @@ class Screen
 		Screen(Adafruit_TFTLCD* lcd, int rows, int columns);
 		void draw();
 		void attach_block(Block* block);
+		void touch( int x, int y );
 	private:
 		// Variables
 		int rows, columns;
@@ -37,9 +38,10 @@ class Block
 		Block( Screen* screen, int xpos, int ypos, int width, int height, void (*action)(void));
 		void	draw();
 		void	(*action)( void ); // function pointer
+		bool	inRegion( int x, int y );
 	private:
 		// Variables
-		int		xpos, ypos, width, height;
+		int		xpos, ypos, width, height; //xpos and ypos indicate the row and column in the grid system. With and height indicate the spanning number of columns and rows respectively.
 		Screen*	screen;
 };
 
