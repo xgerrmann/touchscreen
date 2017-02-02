@@ -54,14 +54,14 @@ Adafruit_TFTLCD lcd( LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET );
 
 // Define single screen
 #define NROWS	4
-#define NCOLS	10
+#define NCOLS	5
 Screen screen( &lcd, NROWS, NCOLS );
 
 // Define several blocks
-Block block1(&screen, 1,	1,		1,	1);
-Block block2(&screen, 2,	2,		1,	1);
-Block block3(&screen, NCOLS,NROWS,	1,	2);
-Block block4(&screen, 1,	NROWS,	1,	1);
+Block block1(&screen, NCOLS,	1,			1,	NROWS/2,	NULL);
+Block block2(&screen, NCOLS,	NROWS/2+1,	1,	NROWS/2,	NULL);
+Block block3(&screen, 2,	2,		1,	1,	NULL);
+Block block4(&screen, 1,	NROWS,	1,	1,	NULL);
 
 void setup(void)
 {
@@ -69,16 +69,21 @@ void setup(void)
 	uint16_t identifier = 0x9488;
 	lcd.begin(identifier);
 	lcd.setRotation(3);
+	screen.attach_block(&block1);
+	screen.attach_block(&block2);
+	screen.attach_block(&block3);
+	screen.attach_block(&block4);
 }
 
 void loop(void)
 {
 	//sc.draw(tft);
 	//delay(1000);
-	lcd.fillScreen(WHITE);
-	block1.draw();
-	block2.draw();
-	block3.draw();
-	block4.draw();
+	//lcd.fillScreen(WHITE);
+	//block1.draw();
+	//block2.draw();
+	//block3.draw();
+	//block4.draw();
+	screen.draw();
 	delay(1000);
 }

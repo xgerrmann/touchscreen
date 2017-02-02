@@ -1,7 +1,12 @@
 #ifndef _UIobjects_
 #define _UIobjects_
 
+#define MAX_ARRAY_LENGTH 20
+
+#include "../LinkedList/LinkedList.h"
 #include "../Adafruit_TFTLCD/Adafruit_TFTLCD.h"
+
+class Block; // Forward declaration. Dereferencing of member access not possible untill the Block class is defined.
 
 // ## SCREEN ##################################################
 class Screen
@@ -10,31 +15,16 @@ class Screen
 		// Variables
 		int row_height, column_width;
 		Adafruit_TFTLCD* lcd;
+		LinkedList<Block*> blocks; // Array of attached blocks
 		
 		// Functions
 		Screen(Adafruit_TFTLCD* lcd, int rows, int columns);
 		void draw();
+		void attach_block(Block* block);
 	private:
 		// Variables
 		int rows, columns;
 };
-
-// Constructor
-Screen::Screen( Adafruit_TFTLCD* display, int r, int c )
-{
-	this->lcd			= display;
-	this->rows			= r;
-	this->columns		= c;
-
-	this->column_width	= (int) display->height()/c;
-	this->row_height	= (int) display->width()/r;
-}
-
-// Draw
-void Screen::draw()
-{
-	lcd->fillScreen(0x001F);
-}
 
 // ## BLOCK ##################################################
 class Block
@@ -43,7 +33,7 @@ class Block
 		// Variables
 		
 		// Functions
-		Block( Screen* screen, int xpos, int ypos, int width, int height, void* action);
+		Block( Screen* screen, int xpos, int ypos, int width, int height, void (*action)(void));
 		void	draw();
 		void	(*action)( void ); // function pointer
 	private:
@@ -52,18 +42,4 @@ class Block
 		Screen*	screen;
 };
 
-// Constructor
-Block::Block( Screen* sc, int x, int y, int w, int h , void* func)
-{
-	this->screen=	sc;
-	this->xpos	=	x-1; ypos = y-1; width = w; height = h;
-	this->action=	func;
-}
-
-// Draw
-void Block::draw()
-{
-	this->screen->lcd->fillRect(xpos*screen->column_width,ypos*screen->row_height,screen->column_width*width, screen->row_height*height, 0xF81F);
-	this->screen->lcd->drawRect(xpos*screen->column_width,ypos*screen->row_height,screen->column_width*width, screen->row_height*height, 0xFFFF);
-}
 #endif
