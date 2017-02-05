@@ -112,9 +112,9 @@ class trackFilter{
 		int N2;
 		float	A[16];
 		float	R[4];
-		float		H[8];
-		float		Q[4];
-		float		P[4];
+		float	H[8];
+		float	Q[16];
+		float	P[16];
 		int width_max, height_max;
 		int		dt;
 		float loc[2];
@@ -190,7 +190,7 @@ void trackFilter::update(float meas[2], float loc[2])
 	float M4 [4];		Matrix.Multiply(K,M3,4,2,1,M4);		// [4x1]
 	float loc_tmp [2]; Matrix.Add(loc,M4,4,1,loc_tmp);	// (pos + K*(meas - H*pos));
 	Matrix.Copy(loc_tmp,4,1,loc);						// [4x1]
-	
+	Matrix.Print(loc_tmp,4,1,"Loc_tmp");
 	// New Covariance matrix
 	// P = (eye(4)-K*H)*PP
 	float M6 [16]; Matrix.Multiply(K,H,4,2,4,M6);			// [4x4]
@@ -229,34 +229,36 @@ void setup(void) {
 
 void loop()
 {
-	long x, y, x_old, y_old;
+	int x_meas, y_meas, x_filt, y_filt;
 	trackFilter filter(420,380,10);
 	tft.setTextSize(3);
-	tft.drawRect(150,200,150,120,WHITE);
-	float measurement[2]	= {};
+	//tft.drawRect(150,200,150,120,WHITE);
+	float measurement[2]= {};
 	float location[2]	= {};
 	while (myTouch.dataAvailable() == true)
 	{
+		Serial.print(".");
 		myTouch.read();
-		y = myTouch.getX();
-		x = myTouch.getY();
-		if ((x!=-1) and (y!=-1))
+		y_meas = myTouch.getX();
+		x_meas = myTouch.getY();
+		if ((x_meas!=-1) and (y_meas!=-1))
 		{
-			y=480-y;
+			y_meas=480-y_meas;
 			
 			//tft.println("X = "); tft.println(x);
 			//tft.println("\tY = "); tft.println(y);
 			//tft.println("\tPressure = "); tft.println(z);
 			
-			measurement[0] = (float) x;
-			measurement[1] = (float) y;
+			measurement[0] = (float) x_meas;
+			measurement[1] = (float) y_meas;
 			filter.update(measurement,location);
-			x	= location[0];
-			y	= location[1];
-			if ( (y>200) && (x>150) )
-			{
-				tft.fillScreen(BLACK);
-			}
+			x_filt	= location[0];
+			y_filt	= location[1];
+			
+			//if ( (y_meas>200) && (x_meas>150) )
+			//{
+			//	tft.fillScreen(BLACK);
+			//}
 			// scale from 0->1023 to tft.width
 			//x = map(x, TS_MINX, TS_MAXX, tft.width(), 0);
 			//y = map(y, TS_MINY, TS_MAXY, tft.height(), 0);
@@ -264,15 +266,16 @@ void loop()
 			tft.fillRect(0,0,51,50,BLACK);
 			tft.setCursor(0,0);
 			tft.setTextColor(WHITE);
-			tft.println(x);
-			tft.println(y);
-			x_old = x;
-			y_old = y;
+			tft.println(x_meas);
+			tft.println(y_meas);
 			
-			if (((y-PENRADIUS) > BOXSIZE) && ((y+PENRADIUS) < tft.height())) {
-			  tft.fillCircle(x, y, PENRADIUS, currentcolor);
+			tft.setTextColor(WHITE);
+			tft.println(x_filt);
+			tft.println(y_filt);
+			
+			if (((y_meas-PENRADIUS) > BOXSIZE) && ((y_meas+PENRADIUS) < tft.height())) {
+				tft.fillCircle(x_meas, y_meas, PENRADIUS, currentcolor);
 			}
-			
 		}
 	}
 }
