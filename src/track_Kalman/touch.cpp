@@ -98,10 +98,7 @@ Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 UTouch  myTouch( 6, 5, 4, 3, 2);
 
 #define BOXSIZE 40
-#define PENRADIUS 3
-int oldcolor, currentcolor;
-
-//HardwareSerial Serial;
+#define PENRADIUS 1
 
 //// MatrixMath operator overloading
 //LiquidCrystal& LiquidCrystal::operator<< (const char str[]) {  //there are a half dozen overloaded versions of print
@@ -161,32 +158,19 @@ trackFilter::trackFilter(int width, int height, int frequency)
 	Matrix.Copy(Q_tmp,4,4,this->Q);
 	Matrix.Copy(P_tmp,4,4,this->P);
 	Matrix.Copy(loc_tmp,4,1,this->loc);
-	
-	Matrix.Print(this->A,4,4,"A");
-	Matrix.Print(this->R,2,2,"R");
-	Matrix.Print(this->H,2,4,"H");
-	Matrix.Print(this->Q,4,4,"Q");
-	Matrix.Print(this->P,4,4,"P");
-	Matrix.Print(this->loc,4,1,"loc");
 }
 
 // Updater
 void trackFilter::update(float meas[2], float loc_out[2])
 {
 	// meas:	measurement [2x1]
-	// loc:		location	[2x1]
-	Matrix.Print(meas,2,1,"Update(meas,loc): meas");
+	// loc_out:	location	[2x1]
+	
 	// PP = A*P*A' + Q
 	float AP[16];	Matrix.Multiply(this->A,this->P,4,4,4,AP);	// [4x4]
 	float A_t[16];	Matrix.Transpose(this->A,4,4,A_t);	// TODO: store as internal variable (because it is constant).
 	float APA[16];	Matrix.Multiply(AP,A_t,4,4,4,APA);	//4x4
 	float PP[16];	Matrix.Add(APA,this->Q,4,4,PP);		// 4x4
-	
-	Matrix.Print(A,4,4,"A");
-	Matrix.Print(AP,4,4,"AP");
-	Matrix.Print(A_t,4,4,"A_t");
-	Matrix.Print(APA,4,4,"APA");
-	Matrix.Print(PP,4,4,"PP");
 	
 	// New Kalman Gain
 	// K = PP*H'*inv(H*PP*H'+R)
@@ -194,15 +178,8 @@ void trackFilter::update(float meas[2], float loc_out[2])
 	float PPH_t[8];		Matrix.Multiply(PP,H_t,4,4,2,PPH_t);		// [4x2]
 	float HPPH_t[4];	Matrix.Multiply(this->H,PPH_t,2,4,2,HPPH_t);// [2x2]
 	float M1[4];		Matrix.Add(HPPH_t,R,2,2,M1);				// [2x2]
-	Matrix.Print(M1,2,2,"M1");
 	Matrix.Invert(M1,2);											// [2x2]
-	Matrix.Print(M1,2,2,"M1");
 	float K[8];			Matrix.Multiply(PPH_t,M1,4,2,2,K);	// [4x2]
-	
-	Matrix.Print(H_t,4,2,"H_t");
-	Matrix.Print(PPH_t,4,2,"PPH_t");
-	Matrix.Print(HPPH_t,2,2,"HPPH_t");
-	Matrix.Print(K,4,2,"K");
 	
 	// Location update
 	//location(new) = (location + K*(measurement - H*location))';
@@ -211,13 +188,7 @@ void trackFilter::update(float meas[2], float loc_out[2])
 	float M4 [4];		Matrix.Multiply(K,M3,4,2,1,M4);			// [4x1]
 	float loc_tmp [4];	Matrix.Add(this->loc,M4,4,1,loc_tmp);	// (pos + K*(meas - H*pos));
 	Matrix.Copy(loc_tmp,4,1,this->loc);							// [2x1] -> write to fist two states
-	Matrix.Print(this->loc,4,1,"this->loc before");
-	Matrix.Print(M3,2,1,"M3");
-	Matrix.Print(M4,4,1,"M4");
-	Matrix.Print(this->loc,4,1,"this->loc after");
-	Matrix.Print(Hloc,2,1,"Hloc");
-	Matrix.Print(meas,2,1,"meas");
-	Matrix.Print(loc_tmp,4,1,"Loc_tmp");
+	
 	// New Covariance matrix
 	// P = (eye(4)-K*H)*PP
 	float M6 [16]; Matrix.Multiply(K,this->H,4,2,4,M6);	// [4x4]
@@ -227,7 +198,6 @@ void trackFilter::update(float meas[2], float loc_out[2])
 					0,0,0,1};		// [4x4]
 	float M8 [16]; Matrix.Subtract(M7,M6,4,4,M8);	// [4x4]
 	Matrix.Multiply(M8,PP,4,4,4,this->P);			// [4x4]
-	Matrix.Print(this->P,4,4,"P");
 	
 	// Output
 	Matrix.Copy(this->loc,2,1,loc_out);
@@ -238,7 +208,6 @@ trackFilter* filter;
 
 void setup(void) 
 {
-	
 	Serial.begin(9600);
 	
 	tft.reset();
@@ -253,10 +222,7 @@ void setup(void)
 	
 	tft.fillScreen(BLACK);
 	
-	currentcolor = RED;
-	
 	tft.setCursor(280, 10);
-	//tft.setRotation(90);
 	tft.setTextColor(WHITE);
 	tft.setTextSize(3);
 	filter = new trackFilter(420,380,10);
@@ -270,7 +236,7 @@ int x_meas, y_meas, x_filt, y_filt;
 	float location[2]	= {};
 	while (myTouch.dataAvailable() == true)
 	{
-		Serial.print(".");
+		int t0 = millis();
 		myTouch.read();
 		y_meas = myTouch.getX();
 		x_meas = myTouch.getY();
@@ -278,25 +244,13 @@ int x_meas, y_meas, x_filt, y_filt;
 		{
 			y_meas=480-y_meas;
 			
-			//tft.println("X = "); tft.println(x);
-			//tft.println("\tY = "); tft.println(y);
-			//tft.println("\tPressure = "); tft.println(z);
-			
 			measurement[0] = (float) x_meas;
 			measurement[1] = (float) y_meas;
 			filter->update(measurement,location);
 			x_filt	= location[0];
 			y_filt	= location[1];
 			
-			//if ( (y_meas>200) && (x_meas>150) )
-			//{
-			//	tft.fillScreen(BLACK);
-			//}
-			// scale from 0->1023 to tft.width
-			//x = map(x, TS_MINX, TS_MAXX, tft.width(), 0);
-			//y = map(y, TS_MINY, TS_MAXY, tft.height(), 0);
-		
-			tft.fillRect(0,0,101,100,BLACK);
+			tft.fillRect(0,0,51,100,BLACK);
 			tft.setCursor(0,0);
 			tft.setTextColor(WHITE);
 			tft.println(x_meas);
@@ -307,8 +261,10 @@ int x_meas, y_meas, x_filt, y_filt;
 			tft.println(y_filt);
 			
 			if (((y_meas-PENRADIUS) > BOXSIZE) && ((y_meas+PENRADIUS) < tft.height())) {
-				tft.fillCircle(x_meas, y_meas, PENRADIUS, currentcolor);
+				tft.fillCircle(x_meas, y_meas, PENRADIUS, RED);
+				tft.fillCircle(x_filt, y_filt, PENRADIUS, BLUE);
 			}
 		}
+		Serial.println(millis()-t0);
 	}
 }
