@@ -151,10 +151,10 @@ trackFilter::trackFilter(int width, int height, int frequency)
 	float loc_tmp[4] = {x,y,0,0};
 	// System matrix
 	float dt = 1/((double)frequency);
-	float A_tmp[16]  = {	1,	dt,	0,	0,
-						0,	1,	0,	0,
-						0,	0,	1,	dt,
-						0,	0,	 0,	 1};
+	float A_tmp[16]  = {	1,	0,	dt,	0,
+							0,	1,	0,	dt,
+							0,	0,	1,	0,
+							0,	0,	0,	 1};
 	Matrix.Copy(A_tmp,4,4,this->A);
 	Matrix.Copy(R_tmp,2,2,this->R);
 	Matrix.Copy(H_tmp,2,4,this->H);
@@ -197,7 +197,7 @@ void trackFilter::update(float meas[2], float loc_out[2])
 	Matrix.Print(M1,2,2,"M1");
 	Matrix.Invert(M1,2);											// [2x2]
 	Matrix.Print(M1,2,2,"M1");
-	float K[8];			Matrix.Multiply(PPH_t,M1,4,4,2,K);	// [4x2]
+	float K[8];			Matrix.Multiply(PPH_t,M1,4,2,2,K);	// [4x2]
 	
 	Matrix.Print(H_t,4,2,"H_t");
 	Matrix.Print(PPH_t,4,2,"PPH_t");
@@ -227,7 +227,7 @@ void trackFilter::update(float meas[2], float loc_out[2])
 					0,0,0,1};		// [4x4]
 	float M8 [16]; Matrix.Subtract(M7,M6,4,4,M8);	// [4x4]
 	Matrix.Multiply(M8,PP,4,4,4,this->P);			// [4x4]
-	Matrix.Print(this->P,4,1,"P");
+	Matrix.Print(this->P,4,4,"P");
 	
 	// Output
 	Matrix.Copy(this->loc,2,1,loc_out);
