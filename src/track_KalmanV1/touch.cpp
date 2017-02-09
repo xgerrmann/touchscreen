@@ -281,10 +281,8 @@ void loop()
 			{
 				if((millis()-t_end_loop)>n_miss*dt*1000)
 				{
-					Serial.println("Break");
 					break; // Break while loop, touch action is interrupted
 				}
-				Serial.println("Continue");
 				data_available = myTouch.dataAvailable();
 				continue; // Restart while loop
 			}
@@ -296,7 +294,6 @@ void loop()
 				// Reset filter for current touch action
 				filter->reset(measurement);
 				filter_init = true;
-				Serial.println("New");
 			}
 			myTouch.read();
 			y_meas = myTouch.getX();
@@ -316,7 +313,6 @@ void loop()
 			}
 			t_end_loop	= millis();
 			t_elapsed	= t_end_loop-t_start_loop;
-			Serial.println(t_elapsed);
 			// Check if data is available for the next loop
 			data_available = myTouch.dataAvailable();
 		}
