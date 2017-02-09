@@ -26,25 +26,74 @@ struct touchAction
 class touchManager
 {
 	private:
-		UTouch* tscreen;
+		UTouch* tScreen;
 	public:
-		touchManager( UTouch* tscreen );
+		touchManager( UTouch* tScreen );
 		touchAction getAction( void );
 };
 
 touchManager::touchManager( UTouch* Tscreen )
 {
 	// Empty constructor
-	this->tscreen = Tscreen;
+	this->tScreen = Tscreen;
 }
 
 touchAction touchManager::getAction()
 {
-	touchAction tmp;
-	return tmp;
+	int x_meas, y_meas;
+	float x_filt, y_filt;
+	float measurement[2]= {};
+	float location[2]	= {};
+	int t_elapsed		= 0;	// [ms]
+	int t_start_touch	= 0;	// [ms]
+	int t_start_loop	= 0;
+	int t_end_loop		= 0;
+	bool filter_init	= false;
+	t_start_touch = millis(); // Timer for the duration of the touch action
+	for(EVER;;)
+	{
+		if(!this->tScreen->dataAvailable())
+		{
+			if((millis()-t_end_loop)>n_miss*dt*1000)
+			{
+				break; // Break while loop, touch action is interrupted
+			}
+			continue; // Restart while loop
+		}
+		t_start_loop = millis();
+	
+		// Reset the filter for each NEW touch action
+		if(!filter_init)
+		{
+			// Reset filter for current touch action
+			filter->reset(measurement);
+			filter_init = true;
+		}
+		tScreen->read();
+		y_meas = tScreen->getX();
+		x_meas = tScreen->getY();
+		if ((x_meas!=-1) and (y_meas!=-1))
+		{
+			y_meas=480-y_meas;
+			
+			measurement[0] = (float) x_meas;
+			measurement[1] = (float) y_meas;
+			filter->update(measurement,location);
+			x_filt	= (float) location[0];
+			y_filt	= (float) location[1];
+		}
+		t_end_loop	= millis();
+		t_elapsed	= t_end_loop-t_start_loop;
+		// Check if data is available for the next loop
+	}
+	touchAction tAction;
+	tAction.location[0] = x_filt;
+	tAction.location[1] = y_filt;
+	tAction.type	= 1;
+	return tAction;
 }
 
-touchManager* tmanager;
+touchManager* tManager;
 
 void setup(void)
 {
@@ -66,65 +115,17 @@ void setup(void)
 	tft.setTextSize(3);
 	
 	filter		= new trackFilter(420,380,dt);
-	tmanager	= new touchManager(&myTouch);
+	tManager	= new touchManager(&myTouch, &filter);
 }
-
-
 
 void loop()
 {
-	int x_meas, y_meas, x_filt, y_filt;
-	float measurement[2]= {};
-	float location[2]	= {};
-	int t_elapsed		= 0;	// [ms]
-	int t_start_touch	= 0;	// [ms]
-	int t_start_loop	= 0;
-	int t_end_loop		= 0;
-	bool filter_init	= false;
 	bool data_available = myTouch.dataAvailable();
 	if(data_available)
 	{
-		t_start_touch = millis(); // Timer for the duration of the touch action
-		for(EVER;;)
-		{
-			if(!data_available)
-			{
-				if((millis()-t_end_loop)>n_miss*dt*1000)
-				{
-					break; // Break while loop, touch action is interrupted
-				}
-				data_available = myTouch.dataAvailable();
-				continue; // Restart while loop
-			}
-			t_start_loop = millis();
-	
-			// Reset the filter for each NEW touch action
-			if(!filter_init)
-			{
-				// Reset filter for current touch action
-				filter->reset(measurement);
-				filter_init = true;
-			}
-			myTouch.read();
-			y_meas = myTouch.getX();
-			x_meas = myTouch.getY();
-			if ((x_meas!=-1) and (y_meas!=-1))
-			{
-				y_meas=480-y_meas;
-				
-				measurement[0] = (float) x_meas;
-				measurement[1] = (float) y_meas;
-				filter->update(measurement,location);
-				x_filt	= location[0];
-				y_filt	= location[1];
-				
-				tft.fillCircle(x_meas, y_meas, 1, RED);
-				tft.fillCircle(x_filt, y_filt, 1, BLUE);
-			}
-			t_end_loop	= millis();
-			t_elapsed	= t_end_loop-t_start_loop;
-			// Check if data is available for the next loop
-			data_available = myTouch.dataAvailable();
-		}
+		Serial.print("Available");
+		touchAction tAction = tManager->getAction();
+		Serial.print("Action received");
+		tft.fillCircle(tAction.location[0], tAction.location[1], 1, BLUE);
 	}
 }
