@@ -32,7 +32,7 @@
 
 Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
-UTouch  myTouch( 6, 5, 4, 3, 2);
+UTouch myTouch( 6, 5, 4, 3, 2);
 
 class trackFilter{
 	private:

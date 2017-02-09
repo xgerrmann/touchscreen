@@ -13,6 +13,39 @@ trackFilter* filter;
 float	dt = 7.0/1000.0; // 7 [ms]
 int		n_miss = 10;
 
+struct touchAction
+{
+	float location[4]; // x, y, dx/dt, dy/dt (Location and speed for x and y)
+	// Type is one of:
+	// 1: Touch
+	// 2: ...
+	// 3: ...
+	int type;
+};
+
+class touchManager
+{
+	private:
+		UTouch* tscreen;
+	public:
+		touchManager( UTouch* tscreen );
+		touchAction getAction( void );
+};
+
+touchManager::touchManager( UTouch* Tscreen )
+{
+	// Empty constructor
+	this->tscreen = Tscreen;
+}
+
+touchAction touchManager::getAction()
+{
+	touchAction tmp;
+	return tmp;
+}
+
+touchManager* tmanager;
+
 void setup(void)
 {
 	Serial.begin(9600);
@@ -32,8 +65,11 @@ void setup(void)
 	tft.setTextColor(WHITE);
 	tft.setTextSize(3);
 	
-	filter = new trackFilter(420,380,dt);
+	filter		= new trackFilter(420,380,dt);
+	tmanager	= new touchManager(&myTouch);
 }
+
+
 
 void loop()
 {
