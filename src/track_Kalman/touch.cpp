@@ -8,7 +8,6 @@
 #include <UTouch.h>
 #include "definitions.h"
 
-trackFilter* filter;
 
 float	dt = 7.0/1000.0; // 7 [ms]
 int		n_miss = 10;
@@ -27,6 +26,7 @@ class touchManager
 {
 	private:
 		UTouch* tScreen;
+		trackFilter* filter;
 	public:
 		touchManager( UTouch* tScreen );
 		touchAction getAction( void );
@@ -34,8 +34,11 @@ class touchManager
 
 touchManager::touchManager( UTouch* Tscreen )
 {
-	// Empty constructor
+	// Attach screen
 	this->tScreen = Tscreen;
+	
+	// Initialize filter
+	this->filter	= new trackFilter(420,380,dt);
 }
 
 touchAction touchManager::getAction()
@@ -104,18 +107,14 @@ void setup(void)
 	myTouch.InitTouch();
 	myTouch.setPrecision(PREC_LOW);
 	
-	uint16_t identifier = 0x9488 ;
-	
-	tft.begin(identifier);
-	
+	tft.begin(0x9488);
 	tft.fillScreen(BLACK);
 	
 	tft.setCursor(280, 10);
 	tft.setTextColor(WHITE);
 	tft.setTextSize(3);
 	
-	filter		= new trackFilter(420,380,dt);
-	tManager	= new touchManager(&myTouch, &filter);
+	tManager	= new touchManager(&myTouch);
 }
 
 void loop()
@@ -123,9 +122,7 @@ void loop()
 	bool data_available = myTouch.dataAvailable();
 	if(data_available)
 	{
-		Serial.print("Available");
 		touchAction tAction = tManager->getAction();
-		Serial.print("Action received");
 		tft.fillCircle(tAction.location[0], tAction.location[1], 1, BLUE);
 	}
 }
