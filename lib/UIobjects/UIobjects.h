@@ -6,7 +6,25 @@
 #include "../LinkedList/LinkedList.h"
 #include "../Adafruit_TFTLCD/Adafruit_TFTLCD.h"
 
-class Block; // Forward declaration. Dereferencing of member access not possible untill the Block class is defined.
+// Forward declarations.
+// Dereferencing of member access not possible until the actual classes are defined.
+class Block;
+class Screen;
+
+// ## SCREENMANAGER
+class screenManager
+{
+	private:
+		int screen_active = 0;
+		LinkedList<Screen*> screens; // List of attached screens
+	public:
+		screenManager( void );
+		void nextScreen( void );
+		void donothing( void );
+		void attach_screen(Screen* screen);
+		void refresh( void );
+		void touch( int x, int y );
+};
 
 // ## SCREEN ##################################################
 class Screen
@@ -15,7 +33,7 @@ class Screen
 		// Variables
 		int row_height, column_width;
 		Adafruit_TFTLCD* lcd;
-		LinkedList<Block*> blocks; // Array of attached blocks
+		LinkedList<Block*> blocks; // List of attached blocks
 		
 		// Functions
 		Screen( void );

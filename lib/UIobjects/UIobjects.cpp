@@ -81,3 +81,37 @@ bool Block::inRegion( int x, int y)
 	}
 	return false;
 }
+
+
+// ## SCREENMANAGER ##################################################
+// Constructor
+screenManager::screenManager( void )
+{
+	// Empty constructor
+}
+
+void screenManager::nextScreen( void )
+{
+	this->screen_active = (this->screen_active+1)%(this->screens.size());
+	this->screens.get(screen_active)->draw();
+}
+
+void screenManager::donothing( void ){//Do nothing}
+
+// Refresh
+void screenManager::refresh( void )
+{
+	this->screens->get(this->screen_active)->draw();
+}
+
+// Attach Screen
+void Screen::attach_block(Screen* screen)
+{
+	this->screens.add(screen);
+}
+
+// Touch
+void Screen::touch(int x, int y)
+{
+	this->screens.get(this->screen_active)->touch(x,y);
+}

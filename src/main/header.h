@@ -41,4 +41,8 @@ UTouch tScreen( 6, 5, 4, 3, 2);
 
 touchManager* tManager;
 
-int screen_active;
+screenManager* sManager;
+
+Screen* screens[NUMBER_SCREENS];
+
+Block* blocks[MAX_BLOCKS];
