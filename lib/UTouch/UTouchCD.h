@@ -23,6 +23,13 @@
 //#define CAL_Y 0x03B1C155UL
 //#define CAL_S 0x801DF13FUL
 
-#define CAL_X 0x0030CEEEUL
-#define CAL_Y 0x03B8016EUL
+//#define CAL_X 0x0030CEEEUL
+//#define CAL_Y 0x03B8016EUL
+//#define CAL_S 0x801DF13FUL
+
+// 10-02-2017 - dd-mm-yyyy
+#define CAL_X 0x003B0DFDUL
+#define CAL_Y 0x03818236UL
 #define CAL_S 0x801DF13FUL
+
+

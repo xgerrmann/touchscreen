@@ -16,3 +16,6 @@ y
 :map <F2> :!make upload <CR>
 ## Make + upload + Serial communication terminal (with automatic closing)
 :map <F2> :!screen -X -S arduino kill; make upload && gnome-terminal -e 'screen -S arduino /dev/ttyUSB0 9600' <CR>
+
+## Calibration
+Use calibration script in src
