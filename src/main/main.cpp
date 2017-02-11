@@ -33,7 +33,7 @@ void setup(void)
 	// Screen 2
 	blocks[6] = new Block(screens[1], NCOLS,	1,			1,	NROWS/2,	donothing);
 	blocks[7] = new Block(screens[1], NCOLS,	NROWS/2+1,	1,	NROWS/2,	donothing);
-	blocks[8] = new Block(screens[1], 3,	4,	2,	1,	donothing);
+	blocks[8] = new Block(screens[1], 3,	4,	2,	1,	nextScreen);
 	
 	// Other
 	Serial.begin(9600);
@@ -62,9 +62,6 @@ void setup(void)
 	tScreen.setPrecision(PREC_LOW);
 	
 	tManager	= new touchManager(&tScreen);
-	
-	//CALL_MEMBER_FN(*sManager,blocks[0]->action)(1);
-	//CALL_MEMBER_FN(*sManager,blocks[5]->action)(1);
 }
 
 void loop(void)

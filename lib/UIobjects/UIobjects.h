@@ -13,7 +13,7 @@ class Block;
 class Screen;
 class screenManager;
 
-typedef void (screenManager::*sMngrMemFn)( int x );
+typedef void (screenManager::*sMngrMemFn)();
 
 // ## SCREENMANAGER
 class screenManager
@@ -23,8 +23,8 @@ class screenManager
 		LinkedList<Screen*> screens; // List of attached screens
 	public:
 		screenManager( void );
-		void nextScreen( int x );
-		void donothing( int x );
+		void nextScreen();
+		void donothing();
 		void attach_screen(Screen* screen);
 		void refresh( void );
 		void touch( int x, int y );
