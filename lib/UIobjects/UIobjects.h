@@ -6,10 +6,14 @@
 #include "../LinkedList/LinkedList.h"
 #include "../Adafruit_TFTLCD/Adafruit_TFTLCD.h"
 
+#define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 // Forward declarations.
 // Dereferencing of member access not possible until the actual classes are defined.
 class Block;
 class Screen;
+class screenManager;
+
+typedef void (screenManager::*sMngrMemFn)( int x );
 
 // ## SCREENMANAGER
 class screenManager
@@ -19,8 +23,8 @@ class screenManager
 		LinkedList<Screen*> screens; // List of attached screens
 	public:
 		screenManager( void );
-		void nextScreen( void );
-		void donothing( void );
+		void nextScreen( int x );
+		void donothing( int x );
 		void attach_screen(Screen* screen);
 		void refresh( void );
 		void touch( int x, int y );
@@ -41,6 +45,7 @@ class Screen
 		void draw();
 		void attach_block(Block* block);
 		void touch( int x, int y );
+		screenManager* sManager;
 	private:
 		// Variables
 		int rows, columns;
@@ -53,9 +58,9 @@ class Block
 		// Variables
 		
 		// Functions
-		Block( Screen* screen, int xpos, int ypos, int width, int height, void (*action)(void));
+		Block( Screen* screen, int xpos, int ypos, int width, int height, sMngrMemFn action);
 		void	draw();
-		void	(*action)( void ); // function pointer
+		sMngrMemFn	action; // function pointer
 		bool	inRegion( int x, int y );
 	private:
 		// Variables

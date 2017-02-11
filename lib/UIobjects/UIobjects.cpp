@@ -4,12 +4,12 @@
 // Constructor
 Screen::Screen( void )
 {
-	this->lcd			= NULL;
-	this->rows			= NULL;
-	this->columns		= NULL;
+	//this->lcd			= NULL;
+	//this->rows			= NULL;
+	//this->columns		= NULL;
 
-	this->column_width	= NULL;
-	this->row_height	= NULL;
+	//this->column_width	= NULL;
+	//this->row_height	= NULL;
 }
 
 Screen::Screen( Adafruit_TFTLCD* display, int r, int c )
@@ -48,14 +48,14 @@ void Screen::touch( int x, int y)
 		Block* block = blocks.get(i);
 		if(block->inRegion( x, y ))
 		{
-			block->action();
+			CALL_MEMBER_FN(*(this->sManager),block->action)(1);
 		}
 	}
 }
 
 // ## BLOCK ##################################################
 // Constructor
-Block::Block( Screen* sc, int x, int y, int w, int h , void (*func)(void))
+Block::Block( Screen* sc, int x, int y, int w, int h , sMngrMemFn func)
 {
 	this->screen=	sc;
 	this->xpos	=	x-1; ypos = y-1; width = w; height = h;
@@ -90,28 +90,34 @@ screenManager::screenManager( void )
 	// Empty constructor
 }
 
-void screenManager::nextScreen( void )
+void screenManager::nextScreen( int x )
 {
 	this->screen_active = (this->screen_active+1)%(this->screens.size());
 	this->screens.get(screen_active)->draw();
 }
 
-void screenManager::donothing( void ){//Do nothing}
+void screenManager::donothing( int x )
+{
+	//Do nothing
+}
 
 // Refresh
 void screenManager::refresh( void )
 {
-	this->screens->get(this->screen_active)->draw();
+	this->screens.get(this->screen_active)->draw();
 }
 
 // Attach Screen
-void Screen::attach_block(Screen* screen)
+void screenManager::attach_screen(Screen* screen)
 {
 	this->screens.add(screen);
+	screen->sManager = this;
 }
 
 // Touch
-void Screen::touch(int x, int y)
+void screenManager::touch(int x, int y)
 {
+	Serial.print("Active screen: ");
+	Serial.println(this->screen_active);
 	this->screens.get(this->screen_active)->touch(x,y);
 }

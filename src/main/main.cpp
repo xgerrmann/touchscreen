@@ -12,6 +12,8 @@
 
 void setup(void)
 {
+	sMngrMemFn donothing	= &screenManager::donothing;
+	sMngrMemFn nextScreen	= &screenManager::nextScreen;
 	sManager	= new screenManager();
 	// Create screens and attach to manager
 	for(int i = 0; i < NUMBER_SCREENS; i++)
@@ -19,19 +21,19 @@ void setup(void)
 		screens[i] = new Screen( &lcd, NROWS, NCOLS );
 		sManager->attach_screen(screens[i]);
 	}
-	
+
 	// Screen 1
-	blocks[0] = new Block(screens[0], NCOLS,	1,			1,	NROWS/2,	&(sManager->donothing));
-	blocks[1] = new Block(screens[0], NCOLS,	NROWS/2+1,	1,	NROWS/2,	&sManager->donothing);
-	blocks[2] = new Block(screens[0], 3,	4,	2,	1,	&sManager->donothing);
-	blocks[3] = new Block(screens[0], 1,	1,	2,	1,	&sManager->donothing);
-	blocks[4] = new Block(screens[0], 3,	1,	2,	1,	&sManager->donothing);
-	blocks[5] = new Block(screens[0], 1,	3,	2,	1,	&sManager->nextScreen);
+	blocks[0] = new Block(screens[0], NCOLS,	1,			1,	NROWS/2,	donothing);
+	blocks[1] = new Block(screens[0], NCOLS,	NROWS/2+1,	1,	NROWS/2,	donothing);
+	blocks[2] = new Block(screens[0], 3,	4,	2,	1,	donothing);
+	blocks[3] = new Block(screens[0], 1,	1,	2,	1,	donothing);
+	blocks[4] = new Block(screens[0], 3,	1,	2,	1,	donothing);
+	blocks[5] = new Block(screens[0], 1,	3,	2,	1,	nextScreen);
 	
 	// Screen 2
-	blocks[6] = new Block(screens[1], NCOLS,	1,			1,	NROWS/2,	&sManager->donothing);
-	blocks[7] = new Block(screens[1], NCOLS,	NROWS/2+1,	1,	NROWS/2,	&sManager->donothing);
-	blocks[8] = new Block(screens[1], 3,	4,	2,	1,	&sManager->donothing);
+	blocks[6] = new Block(screens[1], NCOLS,	1,			1,	NROWS/2,	donothing);
+	blocks[7] = new Block(screens[1], NCOLS,	NROWS/2+1,	1,	NROWS/2,	donothing);
+	blocks[8] = new Block(screens[1], 3,	4,	2,	1,	donothing);
 	
 	// Other
 	Serial.begin(9600);
@@ -51,6 +53,7 @@ void setup(void)
 	screens[1]->attach_block(blocks[7]);
 	screens[1]->attach_block(blocks[8]);
 	
+	
 	// Draw first screen
 	sManager->refresh();
 
@@ -59,6 +62,9 @@ void setup(void)
 	tScreen.setPrecision(PREC_LOW);
 	
 	tManager	= new touchManager(&tScreen);
+	
+	//CALL_MEMBER_FN(*sManager,blocks[0]->action)(1);
+	//CALL_MEMBER_FN(*sManager,blocks[5]->action)(1);
 }
 
 void loop(void)
