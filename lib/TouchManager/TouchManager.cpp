@@ -119,10 +119,23 @@ touchManager::touchManager( UTouch* Tscreen)
 	this->filter	= new trackFilter(420,380,this->dt);
 }
 
+touchManager::touchManager( UTouch* Tscreen, Adafruit_TFTLCD* LCD)
+{
+	// Attach screen
+	this->tScreen = Tscreen;
+	
+	// Initialize filter
+	this->filter	= new trackFilter(420,380,this->dt);
+
+	// Connect display
+	this->lcd		= LCD;
+}
+
 touchAction touchManager::getAction()
 {
 	int x_meas, y_meas;
 	float x_filt, y_filt;
+	float x_filt_prev, y_filt_prev;
 	float measurement[2]= {};
 	float location[2]	= {};
 	int t_elapsed		= 0;	// [ms]
@@ -147,6 +160,7 @@ touchAction touchManager::getAction()
 		// Reset the filter for each NEW touch action
 		if(!filter_init)
 		{
+			Serial.println("New");
 			// Reset filter for current touch action
 			filter->reset(measurement);
 			filter_init = true;
@@ -161,16 +175,23 @@ touchAction touchManager::getAction()
 			measurement[0] = (float) x_meas;
 			measurement[1] = (float) y_meas;
 			filter->update(measurement,location);
+			x_filt_prev = x_filt;
+			y_filt_prev = y_filt;
 			x_filt	= (float) location[0];
 			y_filt	= (float) location[1];
+			if(this->lcd)
+			{
+				this->lcd->fillCircle(x_filt,y_filt,1,0x001F);
+				this->lcd->fillCircle(x_meas,y_meas,1,0xF800);
+			}
 		}
 		t_end_loop	= millis();
 		t_elapsed	= t_end_loop-t_start_loop;
 		// Check if data is available for the next loop
 	}
 	touchAction tAction;
-	tAction.location[0] = x_filt;
-	tAction.location[1] = y_filt;
+	tAction.location[0] = x_filt_prev;
+	tAction.location[1] = y_filt_prev; // Return second last filtered point (releas introduces noise).
 	tAction.type	= 1;
 	return tAction;
 }

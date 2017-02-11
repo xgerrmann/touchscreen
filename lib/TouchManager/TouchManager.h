@@ -31,7 +31,7 @@ class trackFilter{
 		float	dt;
 		float loc[4]; // [x,y,dx/dt,dy/dt]
 		float Pscale = 100;
-		float Qscale = 0.001;
+		float Qscale = 0.00001;
 
 		// Procedures
 		void setConstantMatrices();
@@ -52,10 +52,13 @@ class touchManager
 	private:
 		UTouch* tScreen;
 		trackFilter* filter;
-		int max_interval_ms = 100;	//  [ms] Max interval between consecutive data points belonging to the same touch action
+		int max_interval_ms = 150;	//  [ms] Max interval between consecutive data points belonging to the same touch action
 		int dt				= 7;	// [ms]
+		// For debugging purposes:
+		Adafruit_TFTLCD* lcd= NULL;
 	public:
 		touchManager( UTouch* tScreen);
+		touchManager( UTouch* tScreen, Adafruit_TFTLCD* lcd);
 		touchAction getAction( void );
 };
 #endif

@@ -25,7 +25,8 @@ void setup(void)
 	tft.setTextColor(WHITE);
 	tft.setTextSize(3);
 
-	tManager		= new touchManager(&myTouch);
+	//tManager	= new touchManager(&myTouch, &tft);
+	tManager	= new touchManager(&myTouch);
 }
 
 void loop()
@@ -34,6 +35,6 @@ void loop()
 	if(data_available)
 	{
 		touchAction tAction = tManager->getAction();
-		tft.fillCircle(tAction.location[0], tAction.location[1], 1, BLUE);
+		tft.fillCircle(tAction.location[0], tAction.location[1], 2, BLUE);
 	}
 }
