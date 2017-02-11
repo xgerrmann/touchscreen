@@ -117,7 +117,6 @@ void screenManager::attach_screen(Screen* screen)
 // Touch
 void screenManager::touch(int x, int y)
 {
-	Serial.print("Active screen: ");
 	Serial.println(this->screen_active);
 	this->screens.get(this->screen_active)->touch(x,y);
 }

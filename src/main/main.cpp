@@ -22,45 +22,51 @@ void setup(void)
 		sManager->attach_screen(screens[i]);
 	}
 
-	// Screen 1
-	blocks[0] = new Block(screens[0], NCOLS,	1,			1,	NROWS/2,	donothing);
-	blocks[1] = new Block(screens[0], NCOLS,	NROWS/2+1,	1,	NROWS/2,	donothing);
-	blocks[2] = new Block(screens[0], 3,	4,	2,	1,	donothing);
-	blocks[3] = new Block(screens[0], 1,	1,	2,	1,	donothing);
-	blocks[4] = new Block(screens[0], 3,	1,	2,	1,	donothing);
-	blocks[5] = new Block(screens[0], 1,	3,	2,	1,	nextScreen);
-	
-	// Screen 2
-	blocks[6] = new Block(screens[1], NCOLS,	1,			1,	NROWS/2,	donothing);
-	blocks[7] = new Block(screens[1], NCOLS,	NROWS/2+1,	1,	NROWS/2,	donothing);
-	blocks[8] = new Block(screens[1], 3,	4,	2,	1,	nextScreen);
+	int block_counter = 0;
+
+	// Normal buttons
+	for(int s=0; s<NUMBER_SCREENS; s++)
+	{
+		for(int r=0; r<NROWS; r++)
+		{
+			for(int c=0; c<(NCOLS-1)/2; c++)
+			{
+				blocks[block_counter] = new Block(screens[0], c*2+1, r+1,	2,	1, donothing);
+				screens[s]->attach_block(blocks[block_counter]);
+				block_counter ++;
+			}
+		}
+	}
+	// Navigation
+	for(int s=0; s<NUMBER_SCREENS; s++)
+	{
+		for(int r=0; r<NROWS; r++)
+		{
+			//sMngrMemFn func;
+			//if(r==4)
+			//{
+			//	func = donothing;
+			//} else {
+			//	func = nextScreen;
+			//}
+			blocks[block_counter] = new Block(screens[0], NCOLS, r+1,	1,	2, nextScreen);
+			screens[s]->attach_block(blocks[block_counter]);
+			block_counter ++;
+		}
+	}
 	
 	// Other
 	Serial.begin(9600);
 	lcd.begin(0x9488);
 	lcd.setRotation(3);
 
-	// Attach screen 1
-	screens[0]->attach_block(blocks[0]);
-	screens[0]->attach_block(blocks[1]);
-	screens[0]->attach_block(blocks[2]);
-	screens[0]->attach_block(blocks[3]);
-	screens[0]->attach_block(blocks[4]);
-	screens[0]->attach_block(blocks[5]);
-	
-	// Attach screen 2
-	screens[1]->attach_block(blocks[6]);
-	screens[1]->attach_block(blocks[7]);
-	screens[1]->attach_block(blocks[8]);
-	
-	
 	// Draw first screen
 	sManager->refresh();
 
 	// Initialize digitizer
 	tScreen.InitTouch(0);
 	tScreen.setPrecision(PREC_LOW);
-	
+
 	tManager	= new touchManager(&tScreen);
 }
 

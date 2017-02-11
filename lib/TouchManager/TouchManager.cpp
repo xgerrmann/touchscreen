@@ -160,7 +160,6 @@ touchAction touchManager::getAction()
 		// Reset the filter for each NEW touch action
 		if(!filter_init)
 		{
-			Serial.println("New");
 			// Reset filter for current touch action
 			filter->reset(measurement);
 			filter_init = true;
