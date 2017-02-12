@@ -20,6 +20,7 @@ class personBlock : public Block
 		void draw();
 	private:
 		Person*	person;
+		int count = 0;
 };
 
 personBlock::personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(), Person* person):Block(sc, x, y, w, h, func)
@@ -39,6 +40,10 @@ void personBlock::draw()
 	int text_y = this->ypos*this->screen->row_height + (int) (this->screen->row_height-txt_height)/2;
 	this->screen->lcd->setCursor(text_x, text_y);
 	this->screen->lcd->println(this->person->name);
+
+	text_x = (this->xpos+2)*this->screen->column_width - x_margin - txt_height;
+	this->screen->lcd->setCursor(text_x, text_y);
+	this->screen->lcd->println(this->count);
 }
 
 
