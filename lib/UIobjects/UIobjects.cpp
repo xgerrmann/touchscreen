@@ -48,14 +48,14 @@ void Screen::touch( int x, int y)
 		Block* block = blocks.get(i);
 		if(block->inRegion( x, y ))
 		{
-			CALL_MEMBER_FN(*(this->sManager),block->action)();
+			block->action();
 		}
 	}
 }
 
 // ## BLOCK ##################################################
 // Constructor
-Block::Block( Screen* sc, int x, int y, int w, int h , sMngrMemFn func)
+Block::Block( Screen* sc, int x, int y, int w, int h , void(*func)())
 {
 	this->screen=	sc;
 	this->xpos	=	x-1; ypos = y-1; width = w; height = h;
@@ -82,7 +82,6 @@ bool Block::inRegion( int x, int y)
 	return false;
 }
 
-
 // ## SCREENMANAGER ##################################################
 // Constructor
 screenManager::screenManager()
@@ -94,11 +93,6 @@ void screenManager::nextScreen()
 {
 	this->screen_active = (this->screen_active+1)%(this->screens.size());
 	this->screens.get(screen_active)->draw();
-}
-
-void screenManager::donothing( void )
-{
-	//Do nothing
 }
 
 // Refresh

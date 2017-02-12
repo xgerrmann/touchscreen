@@ -13,7 +13,7 @@ class Block;
 class Screen;
 class screenManager;
 
-typedef void (screenManager::*sMngrMemFn)();
+//typedef void (screenManager::*sMngrMemFn)();
 
 // ## SCREENMANAGER
 class screenManager
@@ -24,7 +24,6 @@ class screenManager
 	public:
 		screenManager( void );
 		void nextScreen();
-		void donothing();
 		void attach_screen(Screen* screen);
 		void refresh( void );
 		void touch( int x, int y );
@@ -38,7 +37,7 @@ class Screen
 		int row_height, column_width;
 		Adafruit_TFTLCD* lcd;
 		LinkedList<Block*> blocks; // List of attached blocks
-		
+
 		// Functions
 		Screen( void );
 		Screen(Adafruit_TFTLCD* lcd, int rows, int columns);
@@ -58,9 +57,9 @@ class Block
 		// Variables
 		
 		// Functions
-		Block( Screen* screen, int xpos, int ypos, int width, int height, sMngrMemFn action);
+		Block( Screen* screen, int xpos, int ypos, int width, int height, void(*action)());
 		virtual void	draw();
-		sMngrMemFn	action; // function pointer
+		void(*action)(); // function pointer
 		bool	inRegion( int x, int y );
 	protected: // Allows variable access in derived classes
 		// Variables

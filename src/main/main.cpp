@@ -11,19 +11,18 @@
 #include <LinkedList.h>
 #include "header.h"
 
-
 // personBlock as an extension of Block
 class personBlock : public Block
 {
 	public:
-		personBlock(Screen* sc, int x, int y, int w, int h, sMngrMemFn func, Person* person);
+		personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(), Person* person);
 		String getText();
 		void draw();
 	private:
-		Person* person;
+		Person*	person;
 };
 
-personBlock::personBlock(Screen* sc, int x, int y, int w, int h, sMngrMemFn func, Person* person):Block(sc, x, y, w, h, func)
+personBlock::personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(), Person* person):Block(sc, x, y, w, h, func)
 {
 	this->person	= person;
 }
@@ -31,13 +30,25 @@ personBlock::personBlock(Screen* sc, int x, int y, int w, int h, sMngrMemFn func
 void personBlock::draw()
 {
 	Block::draw();
-	this->screen->lcd->setCursor(this->xpos*this->screen->column_width, this->ypos*this->screen->row_height);
+	int x_margin	= 5;
+	int txt_size	= 2;
+	int txt_height	= txt_size*7;
+	this->screen->lcd->setTextSize(txt_size);
+
+	int text_x = this->xpos*this->screen->column_width + x_margin;
+	int text_y = this->ypos*this->screen->row_height + (int) (this->screen->row_height-txt_height)/2;
+	this->screen->lcd->setCursor(text_x, text_y);
 	this->screen->lcd->println(this->person->name);
 }
 
 
 void setup(void)
 {
+	void (*nxtScrn_ptr)();
+	void (*dnthng_ptr)();
+	nxtScrn_ptr	= &nextScreen;
+	dnthng_ptr	= &donothing;
+
 	Serial.begin(9600);
 
 	persons.add(new Person("Knor",1));
@@ -51,8 +62,8 @@ void setup(void)
 	persons.add(new Person("Bami",9));
 
 	// Blocks
-	sMngrMemFn donothing	= &screenManager::donothing;
-	sMngrMemFn nextScreen	= &screenManager::nextScreen;
+	//sMngrMemFn donothing	= &screenManager::donothing;
+	//sMngrMemFn nextScreen	= &screenManager::nextScreen;
 	sManager				= new screenManager();
 	// Create screens and attach to manager
 	for(int i = 0; i < NUMBER_SCREENS; i++)
@@ -72,7 +83,7 @@ void setup(void)
 		s = (int) floor((double)block_counter/8);
 		r = (int) floor((double)(block_counter %(s*8))/(NCOLS/2)) ;
 		c = block_counter%(NCOLS/2);
-		blocks[block_counter] = new personBlock(screens[0], c*2+1, r+1,	2,	1, donothing, persons.get(i));
+		blocks[block_counter] = new personBlock(screens[s], c*2+1, r+1,	2,	1, &donothing, persons.get(i));
 		screens[s]->attach_block(blocks[block_counter]);
 		block_counter ++;
 	}
@@ -88,7 +99,7 @@ void setup(void)
 			//} else {
 			//	func = nextScreen;
 			//}
-			blocks[block_counter] = new Block(screens[0], NCOLS, r+1,	1,	1, nextScreen);
+			blocks[block_counter] = new Block(screens[s], NCOLS, r+1,	1,	1, &nextScreen);
 			screens[s]->attach_block(blocks[block_counter]);
 			block_counter ++;
 		}

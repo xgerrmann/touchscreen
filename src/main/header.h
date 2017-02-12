@@ -56,3 +56,15 @@ struct Person
 };
 
 LinkedList<Person*> persons; // List of attached blocks
+
+
+// Button action callbacks
+void donothing()
+{
+	//Do nothing
+}
+
+void nextScreen()
+{
+	sManager->nextScreen();
+}
