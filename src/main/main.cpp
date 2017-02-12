@@ -49,7 +49,7 @@ void setup(void)
 			//} else {
 			//	func = nextScreen;
 			//}
-			blocks[block_counter] = new Block(screens[0], NCOLS, r+1,	1,	2, nextScreen);
+			blocks[block_counter] = new Block(screens[0], NCOLS, r+1,	1,	1, nextScreen);
 			screens[s]->attach_block(blocks[block_counter]);
 			block_counter ++;
 		}
@@ -68,6 +68,7 @@ void setup(void)
 	tScreen.setPrecision(PREC_LOW);
 
 	tManager	= new touchManager(&tScreen);
+	Serial.println("Initialized");
 }
 
 void loop(void)
