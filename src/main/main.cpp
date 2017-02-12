@@ -16,23 +16,24 @@
 class personBlock : public Block
 {
 	public:
-		personBlock(Screen* sc, int x, int y, int w, int h, sMngrMemFn func, Person* person):Block(sc, x, y, w, h, func){};
+		personBlock(Screen* sc, int x, int y, int w, int h, sMngrMemFn func, Person* person);
 		String getText();
-//		void draw();
+		void draw();
 	private:
 		Person* person;
 };
 
-//personBlock::Block(Screen* sc, int x, int y, int w, int h, sMngrMemFn func, Person* person)
-//{
-//	this->person	= person;
-//}
+personBlock::personBlock(Screen* sc, int x, int y, int w, int h, sMngrMemFn func, Person* person):Block(sc, x, y, w, h, func)
+{
+	this->person	= person;
+}
 
-//personBlock::draw()
-//{
-//	Block::draw();
-//	Serial.println(this->person->name);
-//}
+void personBlock::draw()
+{
+	Block::draw();
+	this->screen->lcd->setCursor(this->xpos*this->screen->column_width, this->ypos*this->screen->row_height);
+	this->screen->lcd->println(this->person->name);
+}
 
 
 void setup(void)
@@ -66,6 +67,8 @@ void setup(void)
 	int c = 0;
 	for(int i=0; i<persons.size(); i++)
 	{
+		//Serial.print("Name: ");
+		//Serial.println(persons.get(i)->name);
 		s = (int) floor((double)block_counter/8);
 		r = (int) floor((double)(block_counter %(s*8))/(NCOLS/2)) ;
 		c = block_counter%(NCOLS/2);

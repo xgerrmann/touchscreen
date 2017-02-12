@@ -59,10 +59,10 @@ class Block
 		
 		// Functions
 		Block( Screen* screen, int xpos, int ypos, int width, int height, sMngrMemFn action);
-		void	draw();
+		virtual void	draw();
 		sMngrMemFn	action; // function pointer
 		bool	inRegion( int x, int y );
-	private:
+	protected: // Allows variable access in derived classes
 		// Variables
 		int		xpos, ypos, width, height; //xpos and ypos indicate the row and column in the grid system. With and height indicate the spanning number of columns and rows respectively.
 		Screen*	screen;
