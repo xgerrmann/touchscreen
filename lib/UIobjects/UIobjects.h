@@ -67,5 +67,4 @@ class Block
 		int		xpos, ypos, width, height; //xpos and ypos indicate the row and column in the grid system. With and height indicate the spanning number of columns and rows respectively.
 		Screen*	screen;
 };
-
 #endif

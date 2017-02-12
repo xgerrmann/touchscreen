@@ -46,3 +46,13 @@ screenManager* sManager;
 Screen* screens[NUMBER_SCREENS];
 
 Block* blocks[MAX_BLOCKS];
+
+// Define persons
+struct Person
+{
+	int id;
+	String name;
+	Person(String name_tmp, int id_tmp):id(id_tmp), name(name_tmp){};
+};
+
+LinkedList<Person*> persons; // List of attached blocks

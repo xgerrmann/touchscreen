@@ -8,13 +8,51 @@
 #include <UTouch.h>
 #include <TouchManager.h> // Library for filtering touchscreen data
 #include <MatrixMath.h>  // Library for matrix calculations
+#include <LinkedList.h>
 #include "header.h"
+
+
+// personBlock as an extension of Block
+class personBlock : public Block
+{
+	public:
+		personBlock(Screen* sc, int x, int y, int w, int h, sMngrMemFn func, Person* person):Block(sc, x, y, w, h, func){};
+		String getText();
+//		void draw();
+	private:
+		Person* person;
+};
+
+//personBlock::Block(Screen* sc, int x, int y, int w, int h, sMngrMemFn func, Person* person)
+//{
+//	this->person	= person;
+//}
+
+//personBlock::draw()
+//{
+//	Block::draw();
+//	Serial.println(this->person->name);
+//}
+
 
 void setup(void)
 {
+	Serial.begin(9600);
+
+	persons.add(new Person("Knor",1));
+	persons.add(new Person("Kotser",2));
+	persons.add(new Person("Trucker",3));
+	persons.add(new Person("Dijntje",4));
+	persons.add(new Person("'Rina",5));
+	persons.add(new Person("Herrie",6));
+	persons.add(new Person("JP",7));
+	persons.add(new Person("OPT",8));
+	persons.add(new Person("Bami",9));
+
+	// Blocks
 	sMngrMemFn donothing	= &screenManager::donothing;
 	sMngrMemFn nextScreen	= &screenManager::nextScreen;
-	sManager	= new screenManager();
+	sManager				= new screenManager();
 	// Create screens and attach to manager
 	for(int i = 0; i < NUMBER_SCREENS; i++)
 	{
@@ -23,19 +61,17 @@ void setup(void)
 	}
 
 	int block_counter = 0;
-
-	// Normal buttons
-	for(int s=0; s<NUMBER_SCREENS; s++)
+	int s = 0;
+	int r = 0;
+	int c = 0;
+	for(int i=0; i<persons.size(); i++)
 	{
-		for(int r=0; r<NROWS; r++)
-		{
-			for(int c=0; c<(NCOLS-1)/2; c++)
-			{
-				blocks[block_counter] = new Block(screens[0], c*2+1, r+1,	2,	1, donothing);
-				screens[s]->attach_block(blocks[block_counter]);
-				block_counter ++;
-			}
-		}
+		s = (int) floor((double)block_counter/8);
+		r = (int) floor((double)(block_counter %(s*8))/(NCOLS/2)) ;
+		c = block_counter%(NCOLS/2);
+		blocks[block_counter] = new personBlock(screens[0], c*2+1, r+1,	2,	1, donothing, persons.get(i));
+		screens[s]->attach_block(blocks[block_counter]);
+		block_counter ++;
 	}
 	// Navigation
 	for(int s=0; s<NUMBER_SCREENS; s++)
@@ -56,7 +92,6 @@ void setup(void)
 	}
 	
 	// Other
-	Serial.begin(9600);
 	lcd.begin(0x9488);
 	lcd.setRotation(3);
 
@@ -68,7 +103,6 @@ void setup(void)
 	tScreen.setPrecision(PREC_LOW);
 
 	tManager	= new touchManager(&tScreen);
-	Serial.println("Initialized");
 }
 
 void loop(void)
