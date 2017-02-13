@@ -11,45 +11,6 @@
 #include <LinkedList.h>
 #include "header.h"
 
-// personBlock as an extension of Block
-class personBlock : public Block
-{
-	public:
-		personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), Person* person);
-		String getText();
-		void draw();
-	private:
-		Person*	person;
-};
-
-personBlock::personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), Person* person):Block(sc, x, y, w, h, func)
-{
-	this->person	= person;
-}
-
-void personBlock::draw()
-{
-	Block::draw();
-	int x_margin	= 5;
-	int txt_size	= 2;
-	int txt_height	= txt_size*7;
-	this->screen->lcd->setTextSize(txt_size);
-
-	int text_x = this->xpos*this->screen->column_width + x_margin;
-	int text_y = this->ypos*this->screen->row_height + (int) (this->screen->row_height-txt_height)/2;
-	this->screen->lcd->setCursor(text_x, text_y);
-	this->screen->lcd->println(this->person->name);
-
-	text_x = (this->xpos+2)*this->screen->column_width - x_margin - txt_height;
-	this->screen->lcd->setCursor(text_x, text_y);
-	if(this->person->increment>0)
-	{
-		this->screen->lcd->print('+');
-		this->screen->lcd->print(this->person->increment);
-	}
-}
-
-
 void setup(void)
 {
 	void (*nxtScrn_ptr)(Block*);
