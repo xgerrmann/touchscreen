@@ -52,19 +52,26 @@ struct Person
 {
 	int id;
 	String name;
-	Person(String name_tmp, int id_tmp):id(id_tmp), name(name_tmp){};
+	int count;
+	int increment = 0;
+	Person(String name_tmp, int id_tmp, int count_tmp):id(id_tmp), name(name_tmp), count(count_tmp){};
 };
 
 LinkedList<Person*> persons; // List of attached blocks
 
 
 // Button action callbacks
-void donothing()
+void donothing(Block* block)
 {
 	//Do nothing
 }
 
-void nextScreen()
+void nextScreen(Block* block)
 {
 	sManager->nextScreen();
+}
+
+void increment(Block* block)
+{
+
 }

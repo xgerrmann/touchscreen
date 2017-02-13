@@ -57,9 +57,9 @@ class Block
 		// Variables
 		
 		// Functions
-		Block( Screen* screen, int xpos, int ypos, int width, int height, void(*action)());
+		Block( Screen* screen, int xpos, int ypos, int width, int height, void(*action)(Block* block));
 		virtual void	draw();
-		void(*action)(); // function pointer
+		void(*action)(Block*); // function pointer
 		bool	inRegion( int x, int y );
 	protected: // Allows variable access in derived classes
 		// Variables

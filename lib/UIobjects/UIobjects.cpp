@@ -48,14 +48,14 @@ void Screen::touch( int x, int y)
 		Block* block = blocks.get(i);
 		if(block->inRegion( x, y ))
 		{
-			block->action();
+			block->action(block);
 		}
 	}
 }
 
 // ## BLOCK ##################################################
 // Constructor
-Block::Block( Screen* sc, int x, int y, int w, int h , void(*func)())
+Block::Block( Screen* sc, int x, int y, int w, int h , void(*func)(Block* block))
 {
 	this->screen=	sc;
 	this->xpos	=	x-1; ypos = y-1; width = w; height = h;

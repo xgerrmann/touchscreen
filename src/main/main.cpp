@@ -15,15 +15,14 @@
 class personBlock : public Block
 {
 	public:
-		personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(), Person* person);
+		personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), Person* person);
 		String getText();
 		void draw();
 	private:
 		Person*	person;
-		int count = 0;
 };
 
-personBlock::personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(), Person* person):Block(sc, x, y, w, h, func)
+personBlock::personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), Person* person):Block(sc, x, y, w, h, func)
 {
 	this->person	= person;
 }
@@ -43,28 +42,34 @@ void personBlock::draw()
 
 	text_x = (this->xpos+2)*this->screen->column_width - x_margin - txt_height;
 	this->screen->lcd->setCursor(text_x, text_y);
-	this->screen->lcd->println(this->count);
+	if(this->person->increment>0)
+	{
+		this->screen->lcd->print('+');
+		this->screen->lcd->print(this->person->increment);
+	}
 }
 
 
 void setup(void)
 {
-	void (*nxtScrn_ptr)();
-	void (*dnthng_ptr)();
-	nxtScrn_ptr	= &nextScreen;
-	dnthng_ptr	= &donothing;
+	void (*nxtScrn_ptr)(Block*);
+	void (*dnthng_ptr)(Block*);
+	void (*increment_ptr)(Block*);
+	nxtScrn_ptr		= &nextScreen;
+	dnthng_ptr		= &donothing;
+	increment_ptr	= &increment;
 
 	Serial.begin(9600);
 
-	persons.add(new Person("Knor",1));
-	persons.add(new Person("Kotser",2));
-	persons.add(new Person("Trucker",3));
-	persons.add(new Person("Dijntje",4));
-	persons.add(new Person("'Rina",5));
-	persons.add(new Person("Herrie",6));
-	persons.add(new Person("JP",7));
-	persons.add(new Person("OPT",8));
-	persons.add(new Person("Bami",9));
+	persons.add(new Person("Knor",1,20));
+	persons.add(new Person("Kotser",2,12));
+	persons.add(new Person("Trucker",3,15));
+	persons.add(new Person("Dijntje",4,3));
+	persons.add(new Person("'Rina",5,2));
+	persons.add(new Person("Herrie",6,5));
+	persons.add(new Person("JP",7,8));
+	persons.add(new Person("OPT",8,3));
+	persons.add(new Person("Bami",9,2));
 
 	// Blocks
 	//sMngrMemFn donothing	= &screenManager::donothing;
@@ -88,7 +93,7 @@ void setup(void)
 		s = (int) floor((double)block_counter/8);
 		r = (int) floor((double)(block_counter %(s*8))/(NCOLS/2)) ;
 		c = block_counter%(NCOLS/2);
-		blocks[block_counter] = new personBlock(screens[s], c*2+1, r+1,	2,	1, &donothing, persons.get(i));
+		blocks[block_counter] = new personBlock(screens[s], c*2+1, r+1,	2,	1, &increment, persons.get(i));
 		screens[s]->attach_block(blocks[block_counter]);
 		block_counter ++;
 	}
@@ -97,14 +102,14 @@ void setup(void)
 	{
 		for(int r=0; r<NROWS; r++)
 		{
-			//sMngrMemFn func;
-			//if(r==4)
-			//{
-			//	func = donothing;
-			//} else {
-			//	func = nextScreen;
-			//}
-			blocks[block_counter] = new Block(screens[s], NCOLS, r+1,	1,	1, &nextScreen);
+			void(*func)(Block*);
+			if(r==3)
+			{
+				func = &nextScreen;
+			} else {
+				func = &donothing;
+			}
+			blocks[block_counter] = new Block(screens[s], NCOLS, r+1,	1,	1, func);
 			screens[s]->attach_block(blocks[block_counter]);
 			block_counter ++;
 		}
