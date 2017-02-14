@@ -92,18 +92,17 @@ personBlock::personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Blo
 void personBlock::draw()
 {
 	Block::draw();
-	int x_margin	= 5;
 	int txt_size	= 2;
 	int txt_height	= txt_size*7;
 	this->screen->lcd->setTextSize(txt_size);
 
-	int text_x = this->xpos*this->screen->column_width + x_margin;
+	int text_x = this->xpos*this->screen->column_width + this->margin + this->padding;
 	int text_y = this->ypos*this->screen->row_height + (int) (this->screen->row_height-txt_height)/2;
 	this->screen->lcd->setCursor(text_x, text_y);
 	this->screen->lcd->println(this->person->name);
 
 	int integer_length = (int) floor(log10(this->person->get_increment())) + 1;
-	text_x = (this->xpos+2)*this->screen->column_width - x_margin - txt_height - integer_length*txt_height;
+	text_x = (this->xpos+2)*this->screen->column_width - this->padding - txt_height - integer_length*txt_height;
 	this->screen->lcd->setCursor(text_x, text_y);
 	if(this->person->get_increment()>0)
 	{

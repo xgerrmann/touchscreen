@@ -79,6 +79,7 @@ void setup(void)
 	// Other
 	lcd.begin(0x9488);
 	lcd.setRotation(3);
+	lcd.setTextColor(BLACK);
 
 	// Draw first screen
 	sManager->refresh();
