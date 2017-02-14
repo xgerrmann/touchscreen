@@ -80,10 +80,14 @@ class personBlock : public Block
 	public:
 		personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), Person* person);
 		String getText();
-		void personBlock::clearText(int text_x, int text_y, int text_height);
+		void personBlock::clearText();
 		void personBlock::drawText();
 		void draw();
+		void clear();
 		Person*	person;
+	private:
+		int text_size	= 2;
+		int text_height	= text_size*7;
 };
 
 personBlock::personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), Person* person):Block(sc, x, y, w, h, func)
@@ -97,20 +101,24 @@ void personBlock::draw()
 	this->drawText();
 }
 
+void personBlock::clear()
+{
+	this->clearText();
+	this->screen->lcd->drawRoundRect(xpos*screen->column_width+this->margin,ypos*screen->row_height+this->margin,screen->column_width*width-2*this->margin, screen->row_height*height-2*this->margin, this->radius, white);
+}
+
 void personBlock::drawText()
 {
-	int txt_size	= 2;
-	int txt_height	= txt_size*7;
-	this->screen->lcd->setTextSize(txt_size);
+	this->screen->lcd->setTextSize(this->text_size);
 
 	int text_x = this->xpos*this->screen->column_width + this->margin + this->padding;
-	int text_y = this->ypos*this->screen->row_height + (int) (this->screen->row_height-txt_height)/2;
-	this->clearText(text_x, text_y, txt_height);
+	int text_y = this->ypos*this->screen->row_height + (int) (this->screen->row_height-this->text_height)/2;
+	this->clearText();
 	this->screen->lcd->setCursor(text_x, text_y);
 	this->screen->lcd->println(this->person->name);
 
 	int integer_length = (int) floor(log10(this->person->get_increment())) + 1;
-	text_x = (this->xpos+2)*this->screen->column_width - this->padding - txt_height - integer_length*txt_height;
+	text_x = (this->xpos+2)*this->screen->column_width - this->padding - this->text_height - integer_length*this->text_height;
 	this->screen->lcd->setCursor(text_x, text_y);
 	if(this->person->get_increment()>0)
 	{
@@ -119,13 +127,16 @@ void personBlock::drawText()
 	}
 }
 
-void personBlock::clearText(int text_x, int text_y, int text_height)
+void personBlock::clearText()
 {
+	int text_x = this->xpos*this->screen->column_width + this->margin + this->padding;
+	int text_y = this->ypos*this->screen->row_height + (int) (this->screen->row_height-this->text_height)/2;
+	
 	int width = (this->xpos+this->width)*this->screen->column_width-text_x-this->margin-1;
 	Serial.println(width);
 	Serial.println(text_x);
 	Serial.println(this->xpos);
-	this->screen->lcd->fillRect(text_x,text_y,width,text_height,white);
+	this->screen->lcd->fillRect(text_x,text_y,width,this->text_height,white);
 }
 
 // Button action callbacks

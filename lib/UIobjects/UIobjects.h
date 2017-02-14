@@ -71,6 +71,7 @@ class Block
 		// Functions
 		Block( Screen* screen, int xpos, int ypos, int width, int height, void(*action)(Block* block));
 		virtual void	draw();
+		virtual void	clear();
 		void(*action)(Block*); // function pointer
 		bool	inRegion( int x, int y );
 		int radius	= 10;

@@ -20,12 +20,14 @@ Screen::Screen( Adafruit_TFTLCD* display, int r, int c )
 
 	this->column_width	= (int) display->height()/c;
 	this->row_height	= (int) display->width()/r;
+
+	// Clear screen
+	this->lcd->fillScreen(white);
 }
 
 // Draw
 void Screen::draw()
 {
-	lcd->fillScreen(white);
 	for(int i =0; i<blocks.size(); i++)
 	{
 		Block* block = blocks.get(i);
@@ -65,9 +67,14 @@ Block::Block( Screen* sc, int x, int y, int w, int h , void(*func)(Block* block)
 // Draw
 void Block::draw()
 {
-	//this->screen->lcd->fillRect(xpos*screen->column_width,ypos*screen->row_height,screen->column_width*width, screen->row_height*height, 0xF81F);
-	//this->screen->lcd->drawRect(xpos*screen->column_width,ypos*screen->row_height,screen->column_width*width, screen->row_height*height, 0xFFFF);
 	this->screen->lcd->drawRoundRect(xpos*screen->column_width+this->margin,ypos*screen->row_height+this->margin,screen->column_width*width-2*this->margin, screen->row_height*height-2*this->margin, this->radius, info_color);
+}
+
+// Draw
+void Block::clear()
+{
+	// Completely clear the area of the block
+	this->screen->lcd->fillRect(xpos*screen->column_width,ypos*screen->row_height,screen->column_width*width, screen->row_height*height, white);
 }
 
 bool Block::inRegion( int x, int y)
@@ -92,6 +99,10 @@ screenManager::screenManager()
 
 void screenManager::nextScreen()
 {
+	for(int i=0; i<this->screens.get(this->screen_active)->blocks.size(); i++)
+	{
+		this->screens.get(this->screen_active)->blocks.get(i)->clear();
+	}
 	this->screen_active = (this->screen_active+1)%(this->screens.size());
 	this->screens.get(screen_active)->draw();
 }
@@ -99,6 +110,7 @@ void screenManager::nextScreen()
 // Refresh
 void screenManager::refresh( void )
 {
+	this->screens.get(this->screen_active)->lcd->fillScreen(white);
 	this->screens.get(this->screen_active)->draw();
 }
 
