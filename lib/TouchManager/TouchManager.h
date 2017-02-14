@@ -52,7 +52,7 @@ class touchManager
 	private:
 		UTouch* tScreen;
 		trackFilter* filter;
-		int max_interval_ms = 150;	//  [ms] Max interval between consecutive data points belonging to the same touch action
+		int max_interval_ms = 80;	//  [ms] Max interval between consecutive data points belonging to the same touch action
 		int dt				= 7;	// [ms]
 		// For debugging purposes:
 		Adafruit_TFTLCD* lcd= NULL;
