@@ -80,6 +80,8 @@ class personBlock : public Block
 	public:
 		personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), Person* person);
 		String getText();
+		void personBlock::clearText(int text_x, int text_y, int text_height);
+		void personBlock::drawText();
 		void draw();
 		Person*	person;
 };
@@ -92,12 +94,18 @@ personBlock::personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Blo
 void personBlock::draw()
 {
 	Block::draw();
+	this->drawText();
+}
+
+void personBlock::drawText()
+{
 	int txt_size	= 2;
 	int txt_height	= txt_size*7;
 	this->screen->lcd->setTextSize(txt_size);
 
 	int text_x = this->xpos*this->screen->column_width + this->margin + this->padding;
 	int text_y = this->ypos*this->screen->row_height + (int) (this->screen->row_height-txt_height)/2;
+	this->clearText(text_x, text_y, txt_height);
 	this->screen->lcd->setCursor(text_x, text_y);
 	this->screen->lcd->println(this->person->name);
 
@@ -109,6 +117,15 @@ void personBlock::draw()
 		this->screen->lcd->print('+');
 		this->screen->lcd->print(this->person->get_increment());
 	}
+}
+
+void personBlock::clearText(int text_x, int text_y, int text_height)
+{
+	int width = (this->xpos+this->width)*this->screen->column_width-text_x-this->margin-1;
+	Serial.println(width);
+	Serial.println(text_x);
+	Serial.println(this->xpos);
+	this->screen->lcd->fillRect(text_x,text_y,width,text_height,white);
 }
 
 // Button action callbacks
@@ -125,5 +142,5 @@ void nextScreen(Block* block)
 void increment(Block* block)
 {
 	static_cast<personBlock*>(block)->person->add();
-	block->draw();
+	static_cast<personBlock*>(block)->drawText();
 }
