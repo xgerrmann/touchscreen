@@ -67,7 +67,7 @@ Block::Block( Screen* sc, int x, int y, int w, int h , void(*func)(Block* block)
 // Draw
 void Block::draw()
 {
-	this->screen->lcd->drawRoundRect(xpos*screen->column_width+this->margin,ypos*screen->row_height+this->margin,screen->column_width*width-2*this->margin, screen->row_height*height-2*this->margin, this->radius, info_color);
+	this->screen->lcd->drawRoundRect(xpos*screen->column_width+this->margin,ypos*screen->row_height+this->margin,screen->column_width*width-2*this->margin, screen->row_height*height-2*this->margin, this->radius, this->color);
 }
 
 // Draw
@@ -90,6 +90,11 @@ bool Block::inRegion( int x, int y)
 	return false;
 }
 
+// setColor
+void Block::setColor(uint16_t color_tmp)
+{
+	this->color = color_tmp;
+}
 // ## SCREENMANAGER ##################################################
 // Constructor
 screenManager::screenManager()

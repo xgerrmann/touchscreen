@@ -77,6 +77,8 @@ class Block
 		int radius	= 10;
 		int margin	= 2;
 		int padding	= 5;
+		uint16_t color = info_color;
+		void setColor(uint16_t color);
 	protected: // Allows variable access in derived classes
 		// Variables
 		int		xpos, ypos, width, height; //xpos and ypos indicate the row and column in the grid system. With and height indicate the spanning number of columns and rows respectively.

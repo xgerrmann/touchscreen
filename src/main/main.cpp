@@ -63,14 +63,34 @@ void setup(void)
 	{
 		for(int r=0; r<NROWS; r++)
 		{
-			void(*func)(Block*);
-			if(r==3)
+			void(*func_action)(Block*);
+			void(*func_draw)(Block*);
+			uint16_t color;
+			switch(r)
 			{
-				func = &nextScreen;
-			} else {
-				func = &donothing;
+				case 0:	func_action	= &donothing;
+						func_draw = &donothing;
+						color = info_color;
+						break; // Button for drinks
+				case 1:	func_action	= &donothing;
+						func_draw = &donothing;
+						color = success_color;
+						break; // Button for approval
+				case 2:	func_action	= &donothing;
+						func_draw = &donothing;
+						color = warning_color_dark;
+						break; // Button for cancel
+				case 3:	func_action	= &nextScreen;
+						func_draw = &donothing;
+						color = info_color;
+						break; // Button for next screen
+				default:func_action = &donothing;
+						func_draw = &donothing;
+						color = info_color;
+						break;
 			}
-			blocks[block_counter] = new Block(screens[s], NCOLS, r+1,	1,	1, func);
+			blocks[block_counter] = new menuBlock(screens[s], NCOLS, r+1,	1,	1, func_action, func_draw);
+			blocks[block_counter]->setColor(color);
 			screens[s]->attach_block(blocks[block_counter]);
 			block_counter ++;
 		}

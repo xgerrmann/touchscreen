@@ -80,8 +80,8 @@ class personBlock : public Block
 	public:
 		personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), Person* person);
 		String getText();
-		void personBlock::clearText();
-		void personBlock::drawText();
+		void clearText();
+		void drawText();
 		void draw();
 		void clear();
 		Person*	person;
@@ -133,9 +133,6 @@ void personBlock::clearText()
 	int text_y = this->ypos*this->screen->row_height + (int) (this->screen->row_height-this->text_height)/2;
 	
 	int width = (this->xpos+this->width)*this->screen->column_width-text_x-this->margin-1;
-	Serial.println(width);
-	Serial.println(text_x);
-	Serial.println(this->xpos);
 	this->screen->lcd->fillRect(text_x,text_y,width,this->text_height,white);
 }
 
@@ -154,4 +151,36 @@ void increment(Block* block)
 {
 	static_cast<personBlock*>(block)->person->add();
 	static_cast<personBlock*>(block)->drawText();
+}
+
+
+// personBlock as an extension of Block
+class menuBlock : public Block
+{
+	public:
+		menuBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), void(*drawFunc)(Block* block));
+		void draw();
+		void(*drawFunc)(Block*);
+		//void clear();
+	private:
+		int text_size	= 2;
+		int text_height	= text_size*7;
+};
+
+menuBlock::menuBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), void(*drawfunc)(Block* block)):Block(sc, x, y, w, h, func)
+{
+	this->drawFunc	= drawfunc;
+}
+
+void menuBlock::draw()
+{
+	Block::draw();
+	//this->screen->lcd->fillRoundRect(xpos*screen->column_width+this->margin,ypos*screen->row_height+this->margin,screen->column_width*width-2*this->margin, screen->row_height*height-2*this->margin, this->radius, this->color);
+	//this->drawFunc(this);
+}
+
+// Drawfunction for nextScreen button
+void nxt_screen_button_draw(Block* block)
+{
+	//empty
 }
