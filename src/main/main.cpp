@@ -69,19 +69,19 @@ void setup(void)
 			switch(r)
 			{
 				case 0:	func_action	= &donothing;
-						func_draw = &donothing;
+						func_draw = NULL;
 						color = info_color;
 						break; // Button for drinks
 				case 1:	func_action	= &donothing;
-						func_draw = &donothing;
+						func_draw = &fillDraw;
 						color = success_color;
 						break; // Button for approval
 				case 2:	func_action	= &donothing;
-						func_draw = &donothing;
+						func_draw = &fillDraw;
 						color = warning_color_dark;
 						break; // Button for cancel
 				case 3:	func_action	= &nextScreen;
-						func_draw = &donothing;
+						func_draw = NULL;
 						color = info_color;
 						break; // Button for next screen
 				default:func_action = &donothing;

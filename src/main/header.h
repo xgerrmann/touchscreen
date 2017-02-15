@@ -158,7 +158,7 @@ void increment(Block* block)
 class menuBlock : public Block
 {
 	public:
-		menuBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), void(*drawFunc)(Block* block));
+		menuBlock(Screen* sc, int x, int y, int w, int h, void(*actionfunc)(Block* block), void(*drawfunc)(Block* block));
 		void draw();
 		void(*drawFunc)(Block*);
 		//void clear();
@@ -167,20 +167,25 @@ class menuBlock : public Block
 		int text_height	= text_size*7;
 };
 
-menuBlock::menuBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), void(*drawfunc)(Block* block)):Block(sc, x, y, w, h, func)
+menuBlock::menuBlock(Screen* sc, int x, int y, int w, int h, void(*actionfunc)(Block* block), void(*drawfunc)(Block* block)):Block(sc, x, y, w, h, actionfunc)
 {
 	this->drawFunc	= drawfunc;
 }
 
 void menuBlock::draw()
 {
-	Block::draw();
-	//this->screen->lcd->fillRoundRect(xpos*screen->column_width+this->margin,ypos*screen->row_height+this->margin,screen->column_width*width-2*this->margin, screen->row_height*height-2*this->margin, this->radius, this->color);
-	//this->drawFunc(this);
+	if(this->drawFunc != NULL)
+	{
+		this->drawFunc(this);
+	} else {
+		Block::draw(); // call default draw function
+	}
 }
 
 // Drawfunction for nextScreen button
-void nxt_screen_button_draw(Block* block)
+void fillDraw(Block* block)
 {
-	//empty
+	Screen* screen = block->getScreen();
+	screen->lcd->fillRoundRect(block->xpos*screen->column_width+block->margin,block->ypos*screen->row_height+block->margin,screen->column_width*block->width-2*block->margin, screen->row_height*block->height-2*block->margin, block->radius, block->color);
 }
+

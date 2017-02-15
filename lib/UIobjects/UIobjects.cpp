@@ -95,6 +95,12 @@ void Block::setColor(uint16_t color_tmp)
 {
 	this->color = color_tmp;
 }
+
+// getScreen
+Screen* Block::getScreen()
+{
+	return this->screen;
+}
 // ## SCREENMANAGER ##################################################
 // Constructor
 screenManager::screenManager()

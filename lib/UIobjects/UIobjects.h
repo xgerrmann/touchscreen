@@ -79,9 +79,11 @@ class Block
 		int padding	= 5;
 		uint16_t color = info_color;
 		void setColor(uint16_t color);
+		// TODO move to protected and make get functions
+		int		xpos, ypos, width, height; //xpos and ypos indicate the row and column in the grid system. With and height indicate the spanning number of columns and rows respectively.
+		Screen* getScreen();
 	protected: // Allows variable access in derived classes
 		// Variables
-		int		xpos, ypos, width, height; //xpos and ypos indicate the row and column in the grid system. With and height indicate the spanning number of columns and rows respectively.
 		Screen*	screen;
 };
 #endif
