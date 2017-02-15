@@ -189,10 +189,9 @@ void fillDraw(Block* block)
 	screen->lcd->fillRoundRect(block->xpos*screen->column_width+block->margin,block->ypos*screen->row_height+block->margin,screen->column_width*block->width-2*block->margin, screen->row_height*block->height-2*block->margin, block->radius, block->color);
 }
 
-
-
 // DialogScreen
 void dialogScreen(Block* block)
 {
+	Serial.print("enter callback");
 	block->getScreen()->sManager->drawScreen("dialog");
 }

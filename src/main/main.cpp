@@ -30,7 +30,7 @@ void setup(void)
 	//sMngrMemFn nextScreen	= &screenManager::nextScreen;
 	sManager				= new screenManager();
 	// Create screens and attach to manager
-	//TODO base number of screens on number of persons 
+	//TODO base number of screens on number of persons
 	int i = 0;
 	for(; i < NUMBER_SCREENS; i++)
 	{
@@ -38,8 +38,9 @@ void setup(void)
 		sManager->attach_screen(screens[i],String(i));
 	}
 	// Dialog screen
-	//screens[i] = new Screen( &lcd, NROWS, NCOLS );
-	//sManager->attach_screen(screens[i],String(i));
+	i++;
+	screens[i] = new Screen( &lcd, NROWS, NCOLS );
+	sManager->attach_screen(screens[i],"dialog");
 
 	int block_counter = 0;
 	int s = 0;
@@ -102,7 +103,6 @@ void setup(void)
 
 	// Draw first screen
 	sManager->refresh(String(0));
-
 	// Initialize digitizer
 	tScreen.InitTouch(0);
 	tScreen.setPrecision(PREC_LOW);

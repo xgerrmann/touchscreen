@@ -110,6 +110,7 @@ screenManager::screenManager()
 
 void screenManager::nextScreen()
 {
+	// TODO: this does not hold anymore, since a different type of screen is added. --> generalize this function
 	for(int i=0; i<this->screens.get(this->screen_active)->blocks.size(); i++)
 	{
 		this->screens.get(this->screen_active)->blocks.get(i)->clear();
@@ -128,6 +129,7 @@ int screenManager::findScreen(String screenName)
 			return index;
 		}
 	}
+	return -1;
 }
 
 // Refresh
@@ -163,12 +165,6 @@ void screenManager::touch(int x, int y)
 // getScreen
 Screen* screenManager::drawScreen(String screenName)
 {
-	for(int index = 0; index<this->screens.size(); index++)
-	{
-		if(this->screenNames.get(index)==screenName)
-		{
-			this->screens.get(index)->draw();
-			break;
-		}
-	}
+	// TODO: smarter drawing
+	this->refresh(screenName);
 }
