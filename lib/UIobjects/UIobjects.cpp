@@ -118,6 +118,18 @@ void screenManager::nextScreen()
 	this->screens.get(screen_active)->draw();
 }
 
+// findScreen
+int screenManager::findScreen(String screenName)
+{
+	for(int index = 0; index<this->screens.size(); index++)
+	{
+		if(this->screenNames.get(index)==screenName)
+		{
+			return index;
+		}
+	}
+}
+
 // Refresh
 void screenManager::refresh( void )
 {
@@ -125,10 +137,20 @@ void screenManager::refresh( void )
 	this->screens.get(this->screen_active)->draw();
 }
 
+// Refresh with screenname given
+void screenManager::refresh( String screenName )
+{
+	int index = this->findScreen(screenName);
+	this->screen_active = index;
+	this->screens.get(index)->lcd->fillScreen(white);
+	this->screens.get(index)->draw();
+}
+
 // Attach Screen
-void screenManager::attach_screen(Screen* screen)
+void screenManager::attach_screen(Screen* screen, String screenName)
 {
 	this->screens.add(screen);
+	this->screenNames.add(screenName);
 	screen->sManager = this;
 }
 
@@ -136,4 +158,17 @@ void screenManager::attach_screen(Screen* screen)
 void screenManager::touch(int x, int y)
 {
 	this->screens.get(this->screen_active)->touch(x,y);
+}
+
+// getScreen
+Screen* screenManager::drawScreen(String screenName)
+{
+	for(int index = 0; index<this->screens.size(); index++)
+	{
+		if(this->screenNames.get(index)==screenName)
+		{
+			this->screens.get(index)->draw();
+			break;
+		}
+	}
 }

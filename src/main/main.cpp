@@ -13,13 +13,6 @@
 
 void setup(void)
 {
-	void (*nxtScrn_ptr)(Block*);
-	void (*dnthng_ptr)(Block*);
-	void (*increment_ptr)(Block*);
-	nxtScrn_ptr		= &nextScreen;
-	dnthng_ptr		= &donothing;
-	increment_ptr	= &increment;
-
 	Serial.begin(9600);
 
 	persons.add(new Person("Knor",1,20));
@@ -37,11 +30,16 @@ void setup(void)
 	//sMngrMemFn nextScreen	= &screenManager::nextScreen;
 	sManager				= new screenManager();
 	// Create screens and attach to manager
-	for(int i = 0; i < NUMBER_SCREENS; i++)
+	//TODO base number of screens on number of persons 
+	int i = 0;
+	for(; i < NUMBER_SCREENS; i++)
 	{
 		screens[i] = new Screen( &lcd, NROWS, NCOLS );
-		sManager->attach_screen(screens[i]);
+		sManager->attach_screen(screens[i],String(i));
 	}
+	// Dialog screen
+	//screens[i] = new Screen( &lcd, NROWS, NCOLS );
+	//sManager->attach_screen(screens[i],String(i));
 
 	int block_counter = 0;
 	int s = 0;
@@ -72,7 +70,7 @@ void setup(void)
 						func_draw = NULL;
 						color = info_color;
 						break; // Button for drinks
-				case 1:	func_action	= &donothing;
+				case 1:	func_action	= &dialogScreen;
 						func_draw = &fillDraw;
 						color = success_color;
 						break; // Button for approval
@@ -95,6 +93,7 @@ void setup(void)
 			block_counter ++;
 		}
 	}
+
 	
 	// Other
 	lcd.begin(0x9488);
@@ -102,7 +101,7 @@ void setup(void)
 	lcd.setTextColor(BLACK);
 
 	// Draw first screen
-	sManager->refresh();
+	sManager->refresh(String(0));
 
 	// Initialize digitizer
 	tScreen.InitTouch(0);
