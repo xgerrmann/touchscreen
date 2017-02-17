@@ -47,13 +47,17 @@ Screen** screens;
 
 Block** blocks;
 
+struct Person;
+
+LinkedList<Person*> persons; // List of attached blocks
+
 int SCREENS_P		;
 int SCREENS_O		;
 int SCREENS_TOTAL	;
 int MAX_BLOCKS		;
 int N_BLOCKS		;
 
-// Define persons
+//#######  Person
 struct Person
 {
 	public:
@@ -83,10 +87,7 @@ int Person::getIncrement( void )
 	return this->increment;
 }
 
-LinkedList<Person*> persons; // List of attached blocks
-
-
-// personBlock as an extension of Block
+//####### personBlock derived from Block
 class personBlock : public Block
 {
 	public:

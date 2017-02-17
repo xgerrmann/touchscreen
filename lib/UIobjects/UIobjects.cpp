@@ -49,7 +49,10 @@ void Screen::touch( int x, int y)
 		Block* block = blocks.get(i);
 		if(block->inRegion( x, y ))
 		{
-			block->action(block);
+			if(block->action != NULL)
+			{
+				block->action(block);
+			}
 		}
 	}
 }

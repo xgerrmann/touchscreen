@@ -34,7 +34,7 @@ void UIElements( void )
 			uint16_t color;
 			switch(r)
 			{
-				case 0:	func_action	= &donothing;
+				case 0:	func_action	= NULL;
 						func_draw = NULL;
 						func_clear = NULL;
 						color = info_color;
@@ -54,7 +54,7 @@ void UIElements( void )
 						func_clear = NULL;
 						color = info_color;
 						break; // Button for next screen
-				default:func_action = &donothing;
+				default:func_action = NULL;
 						func_draw = &donothing;
 						func_clear = NULL;
 						color = info_color;
