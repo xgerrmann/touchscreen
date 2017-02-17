@@ -44,7 +44,6 @@ void Screen::attach_block(Block* block)
 // Touch Handler
 void Screen::touch( int x, int y)
 {
-	this->lcd->fillCircle(x, y, 2, black);
 	for(int i=0; i<blocks.size(); i++)
 	{
 		Block* block = blocks.get(i);
