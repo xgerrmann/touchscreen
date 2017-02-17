@@ -32,17 +32,15 @@ class screenManager
 {
 	private:
 		int screen_active = 0;
-		LinkedList<Screen*> screens;	// List of attached screens
-		LinkedList<String> screenNames;	// TODO: make list of tuples to linkt Screenpointer and string. || List of names of the attached screens
-		findScreen(String screenName);
 	public:
 		screenManager( void );
-		void nextScreen();
-		void attach_screen(Screen* screen, String screenName);
+		void attach_screen(Screen* screen);
 		void refresh( void );
-		void refresh( String screenName );
+		void refresh( int index );
 		void touch( int x, int y );
-		Screen* drawScreen(String screenName);
+		Screen* drawScreen(int index);
+		// TODO: move to private and make setters and getters for functions acting on screens
+		LinkedList<Screen*> screens;	// List of attached screens
 };
 
 // ## SCREEN ##################################################
@@ -61,6 +59,7 @@ class Screen
 		void attach_block(Block* block);
 		void touch( int x, int y );
 		screenManager* sManager;
+		void clear();
 	private:
 		// Variables
 		int rows, columns;

@@ -55,6 +55,15 @@ void Screen::touch( int x, int y)
 	}
 }
 
+// Clear
+void Screen::clear()
+{
+	for(int i=0; i<this->blocks.size(); i++)
+	{
+		this->blocks.get(i)->clear();
+	}
+}
+
 // ## BLOCK ##################################################
 // Constructor
 Block::Block( Screen* sc, int x, int y, int w, int h , void(*func)(Block* block))
@@ -108,51 +117,26 @@ screenManager::screenManager()
 	// Empty constructor
 }
 
-void screenManager::nextScreen()
-{
-	// TODO: this does not hold anymore, since a different type of screen is added. --> generalize this function
-	for(int i=0; i<this->screens.get(this->screen_active)->blocks.size(); i++)
-	{
-		this->screens.get(this->screen_active)->blocks.get(i)->clear();
-	}
-	this->screen_active = (this->screen_active+1)%(this->screens.size());
-	this->screens.get(screen_active)->draw();
-}
-
-// findScreen
-int screenManager::findScreen(String screenName)
-{
-	for(int index = 0; index<this->screens.size(); index++)
-	{
-		if(this->screenNames.get(index)==screenName)
-		{
-			return index;
-		}
-	}
-	return -1;
-}
-
 // Refresh
 void screenManager::refresh( void )
 {
-	this->screens.get(this->screen_active)->lcd->fillScreen(white);
-	this->screens.get(this->screen_active)->draw();
+	//this->screens.get(this->screen_active)->lcd->fillScreen(white);
+	//this->screens.get(this->screen_active)->draw();
+	this->drawScreen(this->screen_active);
 }
 
 // Refresh with screenname given
-void screenManager::refresh( String screenName )
+void screenManager::refresh( int index )
 {
-	int index = this->findScreen(screenName);
 	this->screen_active = index;
 	this->screens.get(index)->lcd->fillScreen(white);
 	this->screens.get(index)->draw();
 }
 
 // Attach Screen
-void screenManager::attach_screen(Screen* screen, String screenName)
+void screenManager::attach_screen(Screen* screen)
 {
 	this->screens.add(screen);
-	this->screenNames.add(screenName);
 	screen->sManager = this;
 }
 
@@ -162,9 +146,13 @@ void screenManager::touch(int x, int y)
 	this->screens.get(this->screen_active)->touch(x,y);
 }
 
-// getScreen
-Screen* screenManager::drawScreen(String screenName)
+// drawScreen
+Screen* screenManager::drawScreen(int index)
 {
-	// TODO: smarter drawing
-	this->refresh(screenName);
+	// Clear current screen
+	this->screens.get(this->screen_active)->clear();
+	
+	// Draw new screen and set internal state
+	this->screens.get(index)->draw();
+	this->screen_active = index;
 }

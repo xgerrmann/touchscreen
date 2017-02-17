@@ -55,7 +55,8 @@ struct Person
 		String name;
 		int count;
 		void add( void );
-		int get_increment( void );
+		void reset();
+		int getIncrement( void );
 		Person(String name_tmp, int id_tmp, int count_tmp):id(id_tmp), name(name_tmp), count(count_tmp){};
 	private:
 		int increment = 0;
@@ -66,7 +67,12 @@ void Person::add( void )
 	this->increment ++;
 }
 
-int Person::get_increment( void )
+void Person::reset( void )
+{
+	this->increment = 0;
+}
+
+int Person::getIncrement( void )
 {
 	return this->increment;
 }
@@ -81,7 +87,8 @@ class personBlock : public Block
 		personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), Person* person);
 		String getText();
 		void clearText();
-		void drawText();
+		void drawText(uint16_t);
+		void drawText(){drawText(black);};
 		void draw();
 		void clear();
 		Person*	person;
@@ -98,18 +105,19 @@ personBlock::personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Blo
 void personBlock::draw()
 {
 	Block::draw();
-	this->drawText();
+	this->drawText(black);
 }
 
 void personBlock::clear()
 {
-	this->clearText();
+	this->drawText(white);
 	this->screen->lcd->drawRoundRect(xpos*screen->column_width+this->margin,ypos*screen->row_height+this->margin,screen->column_width*width-2*this->margin, screen->row_height*height-2*this->margin, this->radius, white);
 }
 
-void personBlock::drawText()
+void personBlock::drawText(uint16_t color)
 {
 	this->screen->lcd->setTextSize(this->text_size);
+	this->screen->lcd->setTextColor(color);
 
 	int text_x = this->xpos*this->screen->column_width + this->margin + this->padding;
 	int text_y = this->ypos*this->screen->row_height + (int) (this->screen->row_height-this->text_height)/2;
@@ -117,14 +125,16 @@ void personBlock::drawText()
 	this->screen->lcd->setCursor(text_x, text_y);
 	this->screen->lcd->println(this->person->name);
 
-	int integer_length = (int) floor(log10(this->person->get_increment())) + 1;
+	int integer_length = (int) floor(log10(this->person->getIncrement())) + 1;
 	text_x = (this->xpos+2)*this->screen->column_width - this->padding - this->text_height - integer_length*this->text_height;
 	this->screen->lcd->setCursor(text_x, text_y);
-	if(this->person->get_increment()>0)
+	if(this->person->getIncrement()>0)
 	{
 		this->screen->lcd->print('+');
-		this->screen->lcd->print(this->person->get_increment());
+		this->screen->lcd->print(this->person->getIncrement());
 	}
+	// Set textcolor to default
+	this->screen->lcd->setTextColor(black);
 }
 
 void personBlock::clearText()
@@ -144,7 +154,9 @@ void donothing(Block* block)
 
 void nextScreen(Block* block)
 {
-	sManager->nextScreen();
+	static int index = 0;
+	index = (index +1 )%2;
+	sManager->drawScreen(index);
 }
 
 void increment(Block* block)
@@ -153,23 +165,51 @@ void increment(Block* block)
 	static_cast<personBlock*>(block)->drawText();
 }
 
+void resetIncrements()
+{
+	for(int i = 0; i<persons.size(); i++)
+	{
+		persons.get(i)->reset();
+	}
+}
+
+void regular_cancel(Block* block)
+{
+	// Reset all increments
+	resetIncrements();
+	// ReDraw blocks in current screen with nonzero increment
+	sManager->refresh();
+	
+}
+
+void dialog_cancel(Block* block)
+{
+	block->getScreen()->clear();
+	// Reset all increments
+	resetIncrements();
+	// Draw first screen
+	sManager->drawScreen(0);
+}
+
 
 // personBlock as an extension of Block
 class menuBlock : public Block
 {
 	public:
-		menuBlock(Screen* sc, int x, int y, int w, int h, void(*actionfunc)(Block* block), void(*drawfunc)(Block* block));
+		menuBlock(Screen* sc, int x, int y, int w, int h, void(*actionfunc)(Block* block), void(*drawfunc)(Block* block), void(*clearfunc)(Block* block));
 		void draw();
 		void(*drawFunc)(Block*);
-		//void clear();
+		void clear();
+		void(*clearFunc)(Block*);
 	private:
 		int text_size	= 2;
 		int text_height	= text_size*7;
 };
 
-menuBlock::menuBlock(Screen* sc, int x, int y, int w, int h, void(*actionfunc)(Block* block), void(*drawfunc)(Block* block)):Block(sc, x, y, w, h, actionfunc)
+menuBlock::menuBlock(Screen* sc, int x, int y, int w, int h, void(*actionfunc)(Block* block), void(*drawfunc)(Block* block), void(*clearfunc)(Block* block)):Block(sc, x, y, w, h, actionfunc)
 {
 	this->drawFunc	= drawfunc;
+	this->clearFunc	= clearfunc;
 }
 
 void menuBlock::draw()
@@ -179,6 +219,16 @@ void menuBlock::draw()
 		this->drawFunc(this);
 	} else {
 		Block::draw(); // call default draw function
+	}
+}
+
+void menuBlock::clear()
+{
+	if(this->clearFunc != NULL)
+	{
+		this->clearFunc(this);
+	} else {
+		Block::clear(); // call default draw function
 	}
 }
 
@@ -192,6 +242,53 @@ void fillDraw(Block* block)
 // DialogScreen
 void dialogScreen(Block* block)
 {
-	Serial.print("enter callback");
-	block->getScreen()->sManager->drawScreen("dialog");
+	sManager->drawScreen(2);
 }
+
+void drawList(Block* block, uint16_t color)
+{
+	Screen* screen			= sManager->screens.get(2);
+	Adafruit_TFTLCD* lcd	= screen->lcd;
+	lcd->setTextColor(color);
+	int x0 = block->xpos*screen->column_width+block->padding;
+	int y0 = block->ypos*screen->row_height+block->padding;
+	int offset = 150;
+	int line_height = 17;
+	int p = 0;
+	for(int i = 0; i<persons.size(); i++)
+	{
+		Person* person = persons.get(i);
+		if(person->getIncrement()>0)
+		{
+			lcd->setCursor(x0,y0+p*line_height);
+			lcd->print(person->name);
+			lcd->setCursor(x0+offset,y0+p*line_height);
+			lcd->print(person->getIncrement());
+			p++;
+		}
+	}
+
+	for(int i = 0; i<persons.size(); i++)
+	{
+		Person* person = persons.get(i);
+		if(person->getIncrement()>0)
+		{
+		}
+	}
+	
+	// Reset text color to default
+	lcd->setTextColor(black);
+}
+
+// Drawfunction for dialog text block
+void drawList(Block* block)
+{
+	drawList(block, black);
+}
+
+// Drawfunction for dialog text block
+void clearList(Block* block)
+{
+	drawList(block, white);
+}
+

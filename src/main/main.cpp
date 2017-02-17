@@ -26,8 +26,6 @@ void setup(void)
 	persons.add(new Person("Bami",9,2));
 
 	// Blocks
-	//sMngrMemFn donothing	= &screenManager::donothing;
-	//sMngrMemFn nextScreen	= &screenManager::nextScreen;
 	sManager				= new screenManager();
 	// Create screens and attach to manager
 	//TODO base number of screens on number of persons
@@ -35,12 +33,13 @@ void setup(void)
 	for(; i < NUMBER_SCREENS; i++)
 	{
 		screens[i] = new Screen( &lcd, NROWS, NCOLS );
-		sManager->attach_screen(screens[i],String(i));
+		sManager->attach_screen(screens[i]);
 	}
 	// Dialog screen
 	i++;
-	screens[i] = new Screen( &lcd, NROWS, NCOLS );
-	sManager->attach_screen(screens[i],"dialog");
+	Serial.print(i);
+	screens[i] = new Screen( &lcd, NROWS, NCOLS);
+	sManager->attach_screen(screens[i]);
 
 	int block_counter = 0;
 	int s = 0;
@@ -48,8 +47,6 @@ void setup(void)
 	int c = 0;
 	for(int i=0; i<persons.size(); i++)
 	{
-		//Serial.print("Name: ");
-		//Serial.println(persons.get(i)->name);
 		s = (int) floor((double)block_counter/8);
 		r = (int) floor((double)(block_counter %(s*8))/(NCOLS/2)) ;
 		c = block_counter%(NCOLS/2);
@@ -64,45 +61,64 @@ void setup(void)
 		{
 			void(*func_action)(Block*);
 			void(*func_draw)(Block*);
+			void(*func_clear)(Block*);
 			uint16_t color;
 			switch(r)
 			{
 				case 0:	func_action	= &donothing;
 						func_draw = NULL;
+						func_clear = NULL;
 						color = info_color;
 						break; // Button for drinks
 				case 1:	func_action	= &dialogScreen;
 						func_draw = &fillDraw;
+						func_clear = NULL;
 						color = success_color;
 						break; // Button for approval
-				case 2:	func_action	= &donothing;
+				case 2:	func_action	= &regular_cancel;
 						func_draw = &fillDraw;
-						color = warning_color_dark;
+						func_clear = NULL;
+						color = danger_color;
 						break; // Button for cancel
 				case 3:	func_action	= &nextScreen;
 						func_draw = NULL;
+						func_clear = NULL;
 						color = info_color;
 						break; // Button for next screen
 				default:func_action = &donothing;
 						func_draw = &donothing;
+						func_clear = NULL;
 						color = info_color;
 						break;
 			}
-			blocks[block_counter] = new menuBlock(screens[s], NCOLS, r+1,	1,	1, func_action, func_draw);
+			blocks[block_counter] = new menuBlock(screens[s], NCOLS, r+1,	1,	1, func_action, func_draw, func_clear);
 			blocks[block_counter]->setColor(color);
 			screens[s]->attach_block(blocks[block_counter]);
-			block_counter ++;
 		}
 	}
 
+	// Dialog
+	blocks[block_counter] = new menuBlock(screens[3], NCOLS, NROWS-2,	1,	1, &donothing, &fillDraw,NULL);
+	blocks[block_counter]->setColor(success_color);
+	screens[3]->attach_block(blocks[block_counter]);
+	block_counter ++;
+	blocks[block_counter] = new menuBlock(screens[3], NCOLS, NROWS-1,	1,	1, &dialog_cancel, &fillDraw, NULL);
+	blocks[block_counter]->setColor(danger_color);
+	screens[3]->attach_block(blocks[block_counter]);
+	block_counter ++;
+	blocks[block_counter] = new menuBlock(screens[3], 2, 1,	1,	1, &donothing, &drawList, &clearList );
+	screens[3]->attach_block(blocks[block_counter]);
+	blocks[block_counter]->setColor(success_color);
+	block_counter ++;
 	
+
 	// Other
 	lcd.begin(0x9488);
 	lcd.setRotation(3);
 	lcd.setTextColor(BLACK);
 
 	// Draw first screen
-	sManager->refresh(String(0));
+	sManager->refresh(0);
 	// Initialize digitizer
 	tScreen.InitTouch(0);
 	tScreen.setPrecision(PREC_LOW);
