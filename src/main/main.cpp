@@ -37,6 +37,7 @@ void setup(void)
 	tScreen.setPrecision(PREC_LOW);
 
 	tManager	= new touchManager(&tScreen);
+	iManager	= new itemManager();
 }
 
 void loop(void)

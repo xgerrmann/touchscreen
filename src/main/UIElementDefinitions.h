@@ -35,7 +35,7 @@ void UIElements( void )
 			uint16_t color;
 			switch(r)
 			{
-				case 0:	func_action	= NULL;
+				case 0:	func_action	= &nextItem;
 						func_draw = NULL;
 						func_clear = NULL;
 						color = info_color;

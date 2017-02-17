@@ -32,6 +32,8 @@
 #define NROWS	4
 #define NCOLS	5
 
+#define NITEMS 3
+
 //#define NUMBER_SCREENS 2
 //#define MAX_BLOCKS (2*NROWS*NCOLS)
 
@@ -50,6 +52,10 @@ Block** blocks;
 struct Person;
 
 LinkedList<Person*> persons; // List of attached blocks
+
+class itemManager;
+
+itemManager* iManager;
 
 int SCREENS_P		;
 int SCREENS_O		;
@@ -86,6 +92,16 @@ int Person::getIncrement( void )
 {
 	return this->increment;
 }
+
+//
+class itemManager
+{
+	public:
+		int getItem( void ){return item;};
+		void nextItem( void ){ item = (item +1 )%NITEMS;};
+	private:
+		int item = 0;
+};
 
 //####### personBlock derived from Block
 class personBlock : public Block
@@ -156,6 +172,12 @@ void nextScreen(Block* block)
 	sManager->drawScreen(index);
 }
 
+void nextItem(Block* block)
+{
+	iManager->nextItem();
+	Serial.print(iManager->getItem());
+	// TODO:redraw screen
+}
 void increment(Block* block)
 {
 	static_cast<personBlock*>(block)->person->add();
@@ -247,6 +269,18 @@ void clearList(Block* block)
 {
 	drawList(block, white);
 }
+
+// Drawfunction for item block
+void drawItemBlock(Block* block)
+{
+	switch(iManager->getItem())
+	{
+		case 0: Serial.print("Bier");
+		case 1: Serial.print("Rode Wijn");
+		case 2: Serial.print("Witte wijn");
+	}
+}
+
 
 void addPersons()
 {
