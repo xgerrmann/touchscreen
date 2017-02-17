@@ -19,7 +19,8 @@ void UIElements( void )
 		s = (int) floor((double)N_BLOCKS/8);
 		r = (int) floor((double)(N_BLOCKS %(s*8))/(NCOLS/2)) ;
 		c = N_BLOCKS%(NCOLS/2);
-		blocks[N_BLOCKS] = new personBlock(screens[s], c*2+1, r+1,	2,	1, &increment, persons.get(i));
+		blocks[N_BLOCKS] = new personBlock(screens[s], c*2+1, r+1,	2,	1, persons.get(i));
+		blocks[N_BLOCKS]->setAction(&increment);
 		screens[s]->attach_block(blocks[N_BLOCKS]);
 		N_BLOCKS ++;
 	}
@@ -55,31 +56,36 @@ void UIElements( void )
 						color = info_color;
 						break; // Button for next screen
 				default:func_action = NULL;
-						func_draw = &donothing;
+						func_draw = NULL;
 						func_clear = NULL;
 						color = info_color;
 						break;
 			}
-			blocks[N_BLOCKS] = new menuBlock(screens[s], NCOLS, r+1,	1,	1, func_action, func_draw, func_clear);
+			blocks[N_BLOCKS] = new Block(screens[s], NCOLS, r+1,	1,	1);
 			blocks[N_BLOCKS]->setColor(color);
+			blocks[N_BLOCKS]->setAction(func_action);
+			blocks[N_BLOCKS]->setDrawfun(func_draw);
+			blocks[N_BLOCKS]->setClearfun(func_clear);
 			screens[s]->attach_block(blocks[N_BLOCKS]);
 		}
 	}
 
 	// Dialog
-	blocks[N_BLOCKS] = new menuBlock(screens[2], NCOLS, NROWS-2,	1,	1, &donothing, &fillDraw,NULL);
+	blocks[N_BLOCKS] = new Block(screens[2], NCOLS, NROWS-2,	1,	1);
+	blocks[N_BLOCKS]->setDrawfun(&fillDraw);
 	blocks[N_BLOCKS]->setColor(success_color);
 	screens[2]->attach_block(blocks[N_BLOCKS]);
 	N_BLOCKS ++;
-	blocks[N_BLOCKS] = new menuBlock(screens[2], NCOLS, NROWS-1,	1,	1, &dialog_cancel, &fillDraw, NULL);
+	blocks[N_BLOCKS] = new Block(screens[2], NCOLS, NROWS-1,	1,	1);
+	blocks[N_BLOCKS]->setAction(&dialog_cancel);
+	blocks[N_BLOCKS]->setDrawfun(&fillDraw);
 	blocks[N_BLOCKS]->setColor(danger_color);
 	screens[2]->attach_block(blocks[N_BLOCKS]);
 	N_BLOCKS ++;
-	blocks[N_BLOCKS] = new menuBlock(screens[2], 2, 1,	1,	1, &donothing, &drawList, &clearList );
+	blocks[N_BLOCKS] = new Block(screens[2], 2, 1,	1,	1);
+	blocks[N_BLOCKS]->setDrawfun(&drawList);
+	blocks[N_BLOCKS]->setClearfun(&clearList);
 	screens[2]->attach_block(blocks[N_BLOCKS]);
 	blocks[N_BLOCKS]->setColor(success_color);
 	N_BLOCKS ++;
-
-
-
 }

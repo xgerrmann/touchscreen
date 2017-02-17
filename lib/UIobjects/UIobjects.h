@@ -72,11 +72,11 @@ class Block
 		// Variables
 		
 		// Functions
-		Block( Screen* screen, int xpos, int ypos, int width, int height, void(*action)(Block* block));
+		Block( Screen* screen, int xpos, int ypos, int width, int height);
 		virtual void	draw();
 		virtual void	clear();
-		void(*action)(Block*); // function pointer
-		bool	inRegion( int x, int y );
+		void(*action)(Block*)	= NULL;	// function pointer
+		bool inRegion( int x, int y );
 		int radius	= 10;
 		int margin	= 2;
 		int padding	= 5;
@@ -85,8 +85,13 @@ class Block
 		// TODO move to protected and make get functions
 		int		xpos, ypos, width, height; //xpos and ypos indicate the row and column in the grid system. With and height indicate the spanning number of columns and rows respectively.
 		Screen* getScreen();
+		void setAction(void(*Action)(Block* block)){ action = Action; };
+		void setDrawfun(void(*drawFun)(Block* block)){ drawfun = drawFun; };
+		void setClearfun(void(*clearFun)(Block* block)){ clearfun = clearFun; };
 	protected: // Allows variable access in derived classes
 		// Variables
 		Screen*	screen;
+		void(*drawfun)(Block*)	= NULL;	// function pointer
+		void(*clearfun)(Block*)	= NULL;	// function pointer
 };
 #endif

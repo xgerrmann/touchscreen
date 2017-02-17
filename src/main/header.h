@@ -91,7 +91,7 @@ int Person::getIncrement( void )
 class personBlock : public Block
 {
 	public:
-		personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), Person* person);
+		personBlock(Screen* sc, int x, int y, int w, int h, Person* person);
 		String getText();
 		void clearText();
 		void drawText(uint16_t);
@@ -104,7 +104,7 @@ class personBlock : public Block
 		int text_height	= text_size*7;
 };
 
-personBlock::personBlock(Screen* sc, int x, int y, int w, int h, void(*func)(Block* block), Person* person):Block(sc, x, y, w, h, func)
+personBlock::personBlock(Screen* sc, int x, int y, int w, int h, Person* person):Block(sc, x, y, w, h)
 {
 	this->person	= person;
 }
@@ -153,12 +153,7 @@ void personBlock::clearText()
 	this->screen->lcd->fillRect(text_x,text_y,width,this->text_height,white);
 }
 
-// Button action callbacks
-void donothing(Block* block)
-{
-	//Do nothing
-}
-
+//######## Block action Callbacks
 void nextScreen(Block* block)
 {
 	static int index = 0;
@@ -196,47 +191,6 @@ void dialog_cancel(Block* block)
 	resetIncrements();
 	// Draw first screen
 	sManager->drawScreen(0);
-}
-
-
-// personBlock as an extension of Block
-class menuBlock : public Block
-{
-	public:
-		menuBlock(Screen* sc, int x, int y, int w, int h, void(*actionfunc)(Block* block), void(*drawfunc)(Block* block), void(*clearfunc)(Block* block));
-		void draw();
-		void(*drawFunc)(Block*);
-		void clear();
-		void(*clearFunc)(Block*);
-	private:
-		int text_size	= 2;
-		int text_height	= text_size*7;
-};
-
-menuBlock::menuBlock(Screen* sc, int x, int y, int w, int h, void(*actionfunc)(Block* block), void(*drawfunc)(Block* block), void(*clearfunc)(Block* block)):Block(sc, x, y, w, h, actionfunc)
-{
-	this->drawFunc	= drawfunc;
-	this->clearFunc	= clearfunc;
-}
-
-void menuBlock::draw()
-{
-	if(this->drawFunc != NULL)
-	{
-		this->drawFunc(this);
-	} else {
-		Block::draw(); // call default draw function
-	}
-}
-
-void menuBlock::clear()
-{
-	if(this->clearFunc != NULL)
-	{
-		this->clearFunc(this);
-	} else {
-		Block::clear(); // call default draw function
-	}
 }
 
 // Drawfunction for nextScreen button

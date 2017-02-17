@@ -68,24 +68,37 @@ void Screen::clear()
 
 // ## BLOCK ##################################################
 // Constructor
-Block::Block( Screen* sc, int x, int y, int w, int h , void(*func)(Block* block))
+Block::Block( Screen* sc, int x, int y, int w, int h)
 {
 	this->screen=	sc;
 	this->xpos	=	x-1; ypos = y-1; width = w; height = h;
-	this->action=	func;
 }
 
 // Draw
 void Block::draw()
 {
-	this->screen->lcd->drawRoundRect(xpos*screen->column_width+this->margin,ypos*screen->row_height+this->margin,screen->column_width*width-2*this->margin, screen->row_height*height-2*this->margin, this->radius, this->color);
+	if(this->drawfun != NULL)
+	{
+		// Use alternative drawfunction if given.
+		this->drawfun(this);
+	} else {
+		// Default draw function
+		this->screen->lcd->drawRoundRect(xpos*screen->column_width+this->margin,ypos*screen->row_height+this->margin,screen->column_width*width-2*this->margin, screen->row_height*height-2*this->margin, this->radius, this->color);
+	}
 }
 
 // Draw
 void Block::clear()
 {
-	// Completely clear the area of the block
-	this->screen->lcd->fillRect(xpos*screen->column_width,ypos*screen->row_height,screen->column_width*width, screen->row_height*height, white);
+	if(this->clearfun != NULL)
+	{
+		// Use alternative drawfunction if given.
+		this->clearfun(this);
+	} else {
+		// Default draw function
+		// Completely clear the area of the block
+		this->screen->lcd->fillRect(xpos*screen->column_width,ypos*screen->row_height,screen->column_width*width, screen->row_height*height, white);
+	}
 }
 
 bool Block::inRegion( int x, int y)
