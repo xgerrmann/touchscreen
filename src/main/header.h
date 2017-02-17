@@ -32,8 +32,8 @@
 #define NROWS	4
 #define NCOLS	5
 
-#define NUMBER_SCREENS 2
-#define MAX_BLOCKS (2*NROWS*NCOLS)
+//#define NUMBER_SCREENS 2
+//#define MAX_BLOCKS (2*NROWS*NCOLS)
 
 Adafruit_TFTLCD lcd(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
@@ -43,9 +43,15 @@ touchManager* tManager;
 
 screenManager* sManager;
 
-Screen* screens[NUMBER_SCREENS];
+Screen** screens;
 
-Block* blocks[MAX_BLOCKS];
+Block** blocks;
+
+int SCREENS_P		;
+int SCREENS_O		;
+int SCREENS_TOTAL	;
+int MAX_BLOCKS		;
+int N_BLOCKS		;
 
 // Define persons
 struct Person
@@ -292,3 +298,16 @@ void clearList(Block* block)
 	drawList(block, white);
 }
 
+
+void addPersons()
+{
+	persons.add(new Person("Knor",1,20));
+	persons.add(new Person("Kotser",2,12));
+	persons.add(new Person("Trucker",3,15));
+	persons.add(new Person("Dijntje",4,3));
+	persons.add(new Person("'Rina",5,2));
+	persons.add(new Person("Herrie",6,5));
+	persons.add(new Person("JP",7,8));
+	persons.add(new Person("OPT",8,3));
+	persons.add(new Person("Bami",9,2));
+}

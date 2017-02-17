@@ -10,107 +10,20 @@
 #include <MatrixMath.h>  // Library for matrix calculations
 #include <LinkedList.h>
 #include "header.h"
+#include "UIElementDefinitions.h"
 
 void setup(void)
 {
 	Serial.begin(9600);
+	addPersons();
 
-	persons.add(new Person("Knor",1,20));
-	persons.add(new Person("Kotser",2,12));
-	persons.add(new Person("Trucker",3,15));
-	persons.add(new Person("Dijntje",4,3));
-	persons.add(new Person("'Rina",5,2));
-	persons.add(new Person("Herrie",6,5));
-	persons.add(new Person("JP",7,8));
-	persons.add(new Person("OPT",8,3));
-	persons.add(new Person("Bami",9,2));
+	SCREENS_P		= (int) ceil((double)persons.size()/(NROWS*2)); // Screens for person blocks
+	SCREENS_O		= 1;							// Other screens
+	SCREENS_TOTAL	= SCREENS_P + SCREENS_O;
+	MAX_BLOCKS		= SCREENS_TOTAL*NROWS*NCOLS;
+	N_BLOCKS		= 0;
 
-	// Blocks
-	sManager				= new screenManager();
-	// Create screens and attach to manager
-	//TODO base number of screens on number of persons
-	int i = 0;
-	for(; i < NUMBER_SCREENS; i++)
-	{
-		screens[i] = new Screen( &lcd, NROWS, NCOLS );
-		sManager->attach_screen(screens[i]);
-	}
-	// Dialog screen
-	i++;
-	Serial.print(i);
-	screens[i] = new Screen( &lcd, NROWS, NCOLS);
-	sManager->attach_screen(screens[i]);
-
-	int block_counter = 0;
-	int s = 0;
-	int r = 0;
-	int c = 0;
-	for(int i=0; i<persons.size(); i++)
-	{
-		s = (int) floor((double)block_counter/8);
-		r = (int) floor((double)(block_counter %(s*8))/(NCOLS/2)) ;
-		c = block_counter%(NCOLS/2);
-		blocks[block_counter] = new personBlock(screens[s], c*2+1, r+1,	2,	1, &increment, persons.get(i));
-		screens[s]->attach_block(blocks[block_counter]);
-		block_counter ++;
-	}
-	// Navigation
-	for(int s=0; s<NUMBER_SCREENS; s++)
-	{
-		for(int r=0; r<NROWS; r++)
-		{
-			void(*func_action)(Block*);
-			void(*func_draw)(Block*);
-			void(*func_clear)(Block*);
-			uint16_t color;
-			switch(r)
-			{
-				case 0:	func_action	= &donothing;
-						func_draw = NULL;
-						func_clear = NULL;
-						color = info_color;
-						break; // Button for drinks
-				case 1:	func_action	= &dialogScreen;
-						func_draw = &fillDraw;
-						func_clear = NULL;
-						color = success_color;
-						break; // Button for approval
-				case 2:	func_action	= &regular_cancel;
-						func_draw = &fillDraw;
-						func_clear = NULL;
-						color = danger_color;
-						break; // Button for cancel
-				case 3:	func_action	= &nextScreen;
-						func_draw = NULL;
-						func_clear = NULL;
-						color = info_color;
-						break; // Button for next screen
-				default:func_action = &donothing;
-						func_draw = &donothing;
-						func_clear = NULL;
-						color = info_color;
-						break;
-			}
-			blocks[block_counter] = new menuBlock(screens[s], NCOLS, r+1,	1,	1, func_action, func_draw, func_clear);
-			blocks[block_counter]->setColor(color);
-			screens[s]->attach_block(blocks[block_counter]);
-		}
-	}
-
-	// Dialog
-	blocks[block_counter] = new menuBlock(screens[3], NCOLS, NROWS-2,	1,	1, &donothing, &fillDraw,NULL);
-	blocks[block_counter]->setColor(success_color);
-	screens[3]->attach_block(blocks[block_counter]);
-	block_counter ++;
-	blocks[block_counter] = new menuBlock(screens[3], NCOLS, NROWS-1,	1,	1, &dialog_cancel, &fillDraw, NULL);
-	blocks[block_counter]->setColor(danger_color);
-	screens[3]->attach_block(blocks[block_counter]);
-	block_counter ++;
-	blocks[block_counter] = new menuBlock(screens[3], 2, 1,	1,	1, &donothing, &drawList, &clearList );
-	screens[3]->attach_block(blocks[block_counter]);
-	blocks[block_counter]->setColor(success_color);
-	block_counter ++;
-	
+	UIElements();
 
 	// Other
 	lcd.begin(0x9488);
