@@ -91,7 +91,7 @@ int Person::getIncrement( void )
 class personBlock : public Block
 {
 	public:
-		personBlock(Screen* sc, int x, int y, int w, int h, Person* person);
+		personBlock(Screen* sc, int x, int y, int w, int h, Person* pers) : person(pers), Block(sc, x, y, w, h){};
 		String getText();
 		void clearText();
 		void drawText(uint16_t);
@@ -103,11 +103,6 @@ class personBlock : public Block
 		int text_size	= 2;
 		int text_height	= text_size*7;
 };
-
-personBlock::personBlock(Screen* sc, int x, int y, int w, int h, Person* person):Block(sc, x, y, w, h)
-{
-	this->person	= person;
-}
 
 void personBlock::draw()
 {
@@ -252,7 +247,6 @@ void clearList(Block* block)
 {
 	drawList(block, white);
 }
-
 
 void addPersons()
 {
