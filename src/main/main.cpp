@@ -2,19 +2,24 @@
 // CONFIGURED FOR EITHER THE TFT SHIELD OR THE BREAKOUT BOARD.
 // SEE RELEVANT COMMENTS IN Adafruit_TFTLCD.h FOR SETUP.
 
-#include <Adafruit_TFTLCD.h> // Hardware-specific library
-#include <Adafruit_GFX.h> // Core graphics library
-#include "UIobjects.h"// Custom library for User interface objects
-#include <UTouch.h>
-#include <TouchManager.h> // Library for filtering touchscreen data
-#include <MatrixMath.h>  // Library for matrix calculations
+#include <Adafruit_TFTLCD.h> 	// Hardware-specific library
+#include <Adafruit_GFX.h> 		// Core graphics library
+#include <UIobjects.h> 			// Custom library for User interface objects
+#include <UTouch.h>				
+#include <TouchManager.h> 		// Library for filtering touchscreen data
+#include <MatrixMath.h> 			// Library for matrix calculations
 #include <LinkedList.h>
 #include "header.h"
+#include <ArduinoJson.h>
+#include "httpGETdata.h"
 #include "UIElementDefinitions.h"
 
 void setup(void)
 {
 	Serial.begin(9600);
+	
+	//getPersons();
+	//getProducts();
 	addPersons();
 
 	SCREENS_P		= (int) ceil((double)persons.size()/(NROWS*2)); // Screens for person blocks

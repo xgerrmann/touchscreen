@@ -314,14 +314,8 @@ void clearList(Block* block)
 // Drawfunction for item block
 void drawItemBlock(Block* block)
 {
-	switch(iManager->getItem())
-	{
-		case 0: Serial.print("Bier");
-		case 1: Serial.print("Rode Wijn");
-		case 2: Serial.print("Witte wijn");
-	}
+	Serial.print(products.get(iManager->getItem())->getName());
 }
-
 
 void addPersons()
 {
@@ -334,4 +328,11 @@ void addPersons()
 	persons.add(new Person("JP",7,8));
 	persons.add(new Person("OPT",8,3));
 	persons.add(new Person("Bami",9,2));
+}
+
+void addProducts()
+{
+	products.add(new Product("Bier",1));
+	products.add(new Product("Rode wijn",2));
+	products.add(new Product("Witte wijn",3));
 }
