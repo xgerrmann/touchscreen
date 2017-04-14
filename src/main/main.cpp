@@ -20,7 +20,13 @@
 
 void setup(void)
 {
-	Serial.begin(9600);
+	Serial.begin(115200);
+	esp.begin(115200);		// Start ESP8266
+	reset();				// Reset ESP
+	while(connectWifi(ssid, pass))
+	{
+		Serial.print("Could not connect. Retry.");
+	}
 	
 	getPersons();
 	getProducts();
@@ -47,6 +53,7 @@ void setup(void)
 
 	tManager	= new touchManager(&tScreen);
 	iManager	= new itemManager();
+	Serial.println("Setup finished");
 }
 
 void loop(void)
