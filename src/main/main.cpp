@@ -28,8 +28,9 @@ void setup(void)
 		Serial.print("Could not connect. Retry.");
 	}
 	
-	getPersons();
 	getProducts();
+	getPersons();
+	//delay(5000);
 	//addPersons();
 
 	SCREENS_P		= (int) ceil((double)persons.size()/(NROWS*2)); // Screens for person blocks
