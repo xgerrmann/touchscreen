@@ -1,3 +1,5 @@
+#ifndef __UIElements__
+#define __UIElements__
 void UIElements( void )
 {
 
@@ -89,3 +91,4 @@ void UIElements( void )
 	blocks[N_BLOCKS]->setColor(success_color);
 	N_BLOCKS ++;
 }
+#endif

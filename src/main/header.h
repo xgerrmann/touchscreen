@@ -1,3 +1,5 @@
+#ifndef __HEAD_MAIN__
+
 #if defined(__SAM3X8E__)
     #undef __FlashStringHelper::F(string_literal)
     #define F(string_literal) string_literal
@@ -336,3 +338,5 @@ void addProducts()
 	products.add(new Product("Rode wijn",2));
 	products.add(new Product("Witte wijn",3));
 }
+
+#endif

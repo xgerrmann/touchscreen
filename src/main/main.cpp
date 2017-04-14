@@ -2,6 +2,9 @@
 // CONFIGURED FOR EITHER THE TFT SHIELD OR THE BREAKOUT BOARD.
 // SEE RELEVANT COMMENTS IN Adafruit_TFTLCD.h FOR SETUP.
 
+#define __cxa_guard_acquire 0
+#define __cxa_guard_release 0
+
 #include <Adafruit_TFTLCD.h> 	// Hardware-specific library
 #include <Adafruit_GFX.h> 		// Core graphics library
 #include <UIobjects.h> 			// Custom library for User interface objects
@@ -14,13 +17,14 @@
 #include "httpGETdata.h"
 #include "UIElementDefinitions.h"
 
+
 void setup(void)
 {
 	Serial.begin(9600);
 	
-	//getPersons();
-	//getProducts();
-	addPersons();
+	getPersons();
+	getProducts();
+	//addPersons();
 
 	SCREENS_P		= (int) ceil((double)persons.size()/(NROWS*2)); // Screens for person blocks
 	SCREENS_O		= 1;							// Other screens

@@ -1,3 +1,6 @@
+#ifndef __HEAD_http__
+#define __HEAD_http__
+
 // ## ESP settings for Wifi and GET request
 char ssid[]		= "Reetro 21";            // your network SSID (name)
 char pass[]		= "JKHj5igu";        // your network password
@@ -158,3 +161,4 @@ getPersons()
 	}
 	//TODO: sort by quantity
 }
+#endif
