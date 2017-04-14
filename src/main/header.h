@@ -50,8 +50,10 @@ Screen** screens;
 Block** blocks;
 
 struct Person;
+struct Product;
 
 LinkedList<Person*> persons; // List of attached blocks
+LinkedList<Product*> products; // List of attached blocks
 
 class itemManager;
 
@@ -63,20 +65,52 @@ int SCREENS_TOTAL	;
 int MAX_BLOCKS		;
 int N_BLOCKS		;
 
+//###### Product
+struct Product
+{
+	public:
+		Product(String product_name, int product_id);
+		int getID();
+		String getName();
+	private:
+		int id;
+		String name;
+};
+
+Product::Product(String product_name, int product_id)
+{
+	id	= product_id;
+	name= product_name;
+}
+
+String Product::getName(){
+	return name;
+}
+
+int Product::getID(){
+	return id;
+}
+
 //#######  Person
 struct Person
 {
 	public:
 		int id;
-		String name;
+		char name[20];
 		int count;
 		void add( void );
 		void reset();
 		int getIncrement( void );
-		Person(String name_tmp, int id_tmp, int count_tmp):id(id_tmp), name(name_tmp), count(count_tmp){};
+		Person(char* name_tmp, int id_tmp, int count_tmp);
 	private:
 		int increment = 0;
 };
+Person::Person(char* name_tmp, int id_tmp, int count_tmp)
+{
+	id		= id_tmp;
+	strcpy(name,name_tmp);
+	count	= count_tmp;
+}
 
 void Person::add( void )
 {
@@ -97,11 +131,18 @@ int Person::getIncrement( void )
 class itemManager
 {
 	public:
+		itemManager();
 		int getItem( void ){return item;};
-		void nextItem( void ){ item = (item +1 )%NITEMS;};
+		void nextItem( void ){ item = (item +1 )%products.size();};
 	private:
 		int item = 0;
+		int n_items;
 };
+
+itemManager::itemManager()
+{
+	n_items = products.size();
+}
 
 //####### personBlock derived from Block
 class personBlock : public Block
