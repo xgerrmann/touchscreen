@@ -35,8 +35,11 @@
 #define NUMBER_SCREENS 2
 
 // ## ESP settings for Wifi and GET request
-char ssid[]		= "Reetro 21";            // your network SSID (name)
-char pass[]		= "JKHj5igu";        // your network password
+//char ssid[]		= "Reetro 21";            // your network SSID (name)
+//char pass[]		= "JKHj5igu";        // your network password
+
+char ssid[]		= "GeenGedoe";            // your network SSID (name)
+char pass[]		= "Epi1005122533#";        // your network password
 
 char server[]	= "api.reetro21.nl";
 byte serverPORT	= 80;
