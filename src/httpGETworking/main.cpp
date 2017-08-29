@@ -23,7 +23,7 @@ void setup(void)
 	reset();				// Reset ESP
 	while(connectWifi(ssid, pass))
 	{
-		Serial.print("Could not connect. Retry.");
+		Serial.println("\r\nCould not connect. Retry.");
 	}
 
 	getProducts();
