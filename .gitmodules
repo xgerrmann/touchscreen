@@ -1,0 +1,3 @@
+[submodule "lib/MatrixMath"]
+	path = lib/MatrixMath
+	url = git@github.com:xgerrmann/MatrixMath.git
