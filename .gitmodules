@@ -1,3 +1,6 @@
 [submodule "lib/MatrixMath"]
 	path = lib/MatrixMath
 	url = git@github.com:xgerrmann/MatrixMath.git
+[submodule "lib/WiFiEsp"]
+	path = lib/WiFiEsp
+	url = git@github.com:xgerrmann/WiFiEsp.git
